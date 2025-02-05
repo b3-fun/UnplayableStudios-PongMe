@@ -224,7 +224,7 @@ pauseDiv.onclick = () => {
 }
 
 function draw_canvas() {
-  //if (!game) return;
+  if (!game) return;
   canvas.width = game.env.tableWidth;
   canvas.height = game.env.tableHeight;
   canvas.style.width = canvas.width / 2 + "px";
