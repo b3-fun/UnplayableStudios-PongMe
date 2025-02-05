@@ -34,12 +34,12 @@ export const gameEnv: gameEnvType = {
 
 // Parameters for game logic, used only by server.
 export const gameParams = {
-  roundBreak: 3000,
-  playerSpeed: 5,
+  roundBreak: 1500,
+  playerSpeed: 15,
   winningScore: 5,
   ballVelocity: {
-    x: 3,
-    y: 3,
+    x: 6,
+    y: 6,
     get v() {
       return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.x, 2));
     },
