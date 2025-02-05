@@ -5,6 +5,38 @@ import {gameEnv, gameParams, games, gameState} from './globals';
 
 const clients: { client: Socket; roomName: string }[] = [];
 
+// Add at the top with other interfaces
+interface WaitingPlayer {
+  socket: Socket;
+  playerName: string;
+}
+
+// Update the waitingPlayers array type
+const waitingPlayers: WaitingPlayer[] = [];
+
+// Update the token verification function to match your format
+interface B3TokenPayload {
+  id: string;
+  address: string;
+  username?: string;
+  avatar?: string;
+}
+
+function verifyToken(token: string): string | null {
+  try {
+    const base64Payload = token.split('.')[1];
+    const payload = Buffer.from(base64Payload, 'base64').toString();
+    const decoded = JSON.parse(payload) as B3TokenPayload;
+    return decoded.username || formatAddress(decoded.address);
+  } catch (err) {
+    return null;
+  }
+}
+
+function formatAddress(address: string) {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
 // Handle events emitted by client to socket.io server.
 export function handleClient(client: Socket, io: Server) {
   function startGame(roomName: string, game: gameStateType) {
@@ -12,6 +44,71 @@ export function handleClient(client: Socket, io: Server) {
     setTimeout(() => {
       playGame(io, roomName, game);
     }, gameParams.roundBreak);
+  }
+
+  function joinRandomGame(
+    data: { playerName: string; token?: string },
+    callback: (error?: string) => void,
+  ) {
+    // Verify token if provided
+    if (data.token) {
+      const username = verifyToken(data.token);
+      if (!username) {
+        callback('Invalid token');
+        return;
+      }
+      data.playerName = username;
+    }
+
+    if (!data.playerName.length) {
+      callback('Player name is required.');
+      return;
+    }
+
+    if (waitingPlayers.length > 0) {
+      // Match with waiting player
+      const opponent = waitingPlayers.shift()!;
+      const roomName = Math.random().toString(36).substring(2, 8);
+      
+      // Create new game
+      const game = JSON.parse(JSON.stringify(gameState));
+      // Put the waiting player (first to join) on the right side (p2)
+      game.p2.name = opponent.playerName;  
+      game.p1.name = data.playerName;  // Put the new player on the left side (p1)
+      games.set(roomName, game);
+
+      // Join both players to room
+      client.join(roomName);
+      opponent.socket.join(roomName);
+      clients.push({client, roomName});
+      clients.push({client: opponent.socket, roomName});
+
+      // Send game data to new player (current client)
+      io.to(client.id).emit('gameData', {
+        playerNumber: 1,  // They'll be player 1 (left side)
+        gameEnv,
+        gameState: game,
+        roomName,
+      });
+
+      // Send game data to waiting player (opponent)
+      io.to(opponent.socket.id).emit('gameData', {
+        playerNumber: 2,  // They'll be player 2 (right side)
+        gameEnv,
+        gameState: game,
+        roomName,
+      });
+
+      startGame(roomName, game);
+      callback();
+    } else {
+      // Add to waiting queue with player name
+      waitingPlayers.push({
+        socket: client,
+        playerName: data.playerName
+      });
+      callback();
+    }
   }
 
   function joinRoom(
@@ -86,6 +183,12 @@ export function handleClient(client: Socket, io: Server) {
   }
 
   function disconnect() {
+    // Remove from waiting players if present
+    const waitingIndex = waitingPlayers.findIndex(wp => wp.socket === client);
+    if (waitingIndex !== -1) {
+      waitingPlayers.splice(waitingIndex, 1);
+    }
+
     for (let i = 0; i < clients.length; i++) {
       if (clients[i].client === client) {
         const game = games.get(clients[i].roomName);
@@ -100,6 +203,7 @@ export function handleClient(client: Socket, io: Server) {
     }
   }
 
+  client.on('joinRandomGame', joinRandomGame);
   client.on('joinRoom', joinRoom);
   client.on('movePlayer', movePlayer);
   client.on('pauseGame', pauseGame);

@@ -1,14 +1,47 @@
 import {io} from 'socket.io-client';
 import {gameEnvType, gameStateType} from './types';
 
+// Update the JWT parsing function to match your format
+function decodeB3Token(token: string): {
+  id: string;
+  address: string;
+  username?: string;
+  avatar?: string;
+} | null {
+  try {
+    const base64Payload = token.split('.')[1];
+    // Use browser's atob for base64 decoding instead of Buffer
+    const payload = atob(base64Payload);
+    return JSON.parse(payload);
+  } catch (e) {
+    return null;
+  }
+}
+
+// Get token from URL
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get('token');
+
 const socket = io(window.location.href);
 const playerInput = <HTMLInputElement>document.getElementById('user')!;
-const roomInput = <HTMLInputElement>document.getElementById('room')!;
 const scoreSpan = document.getElementById('score')!;
-const joinBtn = document.getElementById('join')!;
+const randomBtn = document.getElementById('random')!;
 const pauseDiv = document.getElementById('pause')!;
 const canvas = document.querySelector('canvas')!;
 const context = canvas.getContext('2d')!;
+
+// If token exists, decode it and set player name
+if (token) {
+  const payload = decodeB3Token(token);
+  if (payload) {
+    playerInput.value = payload.username ?? formatAddress(payload.address);
+    playerInput.setAttribute('disabled', 'true');
+  }
+}
+
+function formatAddress(address: string) {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
 
 class Game {
   env: gameEnvType;
@@ -32,20 +65,29 @@ class Player {
 
 let game: Game, player: Player;
 
-joinBtn.onclick = () => {
-  socket.emit('joinRoom', {playerName: playerInput.value, roomName: roomInput.value}, (error: string) => {
+function disableInputs() {
+  playerInput.setAttribute('disabled', 'true');
+  randomBtn.setAttribute('disabled', 'true');
+}
+
+// Update the joinRandomGame emit to include the token
+randomBtn.onclick = () => {
+  socket.emit('joinRandomGame', {
+    playerName: playerInput.value,
+    token: token
+  }, (error: string) => {
     if (error) {
       alert(error);
+    } else {
+      alert('Waiting for opponent...');
     }
   });
-  playerInput.setAttribute('disabled', 'true');
-  roomInput.setAttribute('disabled', 'true');
-  joinBtn.setAttribute('disabled', 'true');
+  disableInputs();
 };
 
 pauseDiv.onclick = () => {
   if (!game) return;
-  socket.emit('pauseGame', {playerNumber: player.number, roomName: roomInput.value}, (error: string) => {
+  socket.emit('pauseGame', {playerNumber: player.number, roomName: game.state.roomName}, (error: string) => {
     if (error) {
       alert(error);
     }
@@ -66,10 +108,18 @@ pauseDiv.onclick = () => {
 
 // handle socket events
 {
-  socket.on('gameData', (data: { playerNumber: number; gameEnv: gameEnvType; gameState: gameStateType }) => {
+  socket.on('gameData', (data: { playerNumber: number; gameEnv: gameEnvType; gameState: gameStateType; roomName?: string }) => {
     if (player) return;
     game = new Game(data.gameEnv, data.gameState);
     player = new Player(data.playerNumber, 0);
+    
+    if (data.roomName) {
+      game.state.roomName = data.roomName;
+    }
+
+    // Show initial player names
+    scoreSpan.textContent = formatGameScore();
+
     setInterval(() => {
       draw_canvas();
     }, data.gameEnv.frameRate);
@@ -77,19 +127,31 @@ pauseDiv.onclick = () => {
 
   socket.on('startGame', () => {
     document.addEventListener('keydown', (e) => {
-      if (player.direction) return;
-      switch (e.key) {
-        case 'ArrowUp':
-          player.direction = 1;
-          break;
-        case 'ArrowDown':
-          player.direction = -1;
-          break;
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        switch (e.key) {
+          case 'ArrowUp':
+            player.direction = 1;
+            break;
+          case 'ArrowDown':
+            player.direction = -1;
+            break;
+        }
+        socket.emit('movePlayer', {
+          playerNumber: player.number,
+          direction: player.direction,
+          roomName: game.state.roomName
+        });
       }
     });
+
     document.addEventListener('keyup', (e) => {
       if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
         player.direction = 0;
+        socket.emit('movePlayer', {
+          playerNumber: player.number,
+          direction: player.direction,
+          roomName: game.state.roomName
+        });
       }
     });
   });
@@ -114,7 +176,7 @@ pauseDiv.onclick = () => {
   socket.on('scoreUpdate', (data: { s1: number; s2: number }) => {
     game.state.p1.score = data.s1;
     game.state.p2.score = data.s2;
-    scoreSpan.textContent = `${data.s1} - ${data.s2}`;
+    scoreSpan.textContent = formatGameScore();
   });
 
   socket.on('winnerUpdate', (data: { winnerNumber: number }) => {
@@ -151,7 +213,7 @@ function draw_canvas() {
   canvas.style.backgroundColor = '#3f526d';
 
   if (player.direction) {
-    socket.emit('movePlayer', {playerNumber: player.number, direction: player.direction, roomName: roomInput.value});
+    socket.emit('movePlayer', {playerNumber: player.number, direction: player.direction, roomName: game.state.roomName});
   }
 
   // Clear canvas
@@ -190,4 +252,12 @@ function draw_canvas() {
       2 * Math.PI
   );
   context.fill();
+}
+
+// Update the formatGameScore function to always show first player (p2) on right
+function formatGameScore() {
+  if (!game) return 'Waiting for players...';
+  
+  // Always show p2 (first player to join) on the right side
+  return `${game.state.p2.name} vs ${game.state.p1.name} (${game.state.p2.score} - ${game.state.p1.score})`;
 }

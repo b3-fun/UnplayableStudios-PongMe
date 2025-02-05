@@ -25,6 +25,7 @@ export type gameStateType = {
   ball: ballType;
   p1: playerType;
   p2: playerType;
+  roomName?: string;
 };
 
 export type ballType = {

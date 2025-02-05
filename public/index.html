@@ -18,7 +18,7 @@
     </div>
 
     <div class='p-2'>
-      <span id='score' class='fs-3'>0 - 0</span>
+      <span id='score' class='fs-4 text-center' style='min-width: 200px; display: inline-block'>Waiting for players...</span>
     </div>
 
     <div id='pause' class='p-2'>
@@ -35,10 +35,8 @@
   </header>
 
   <div class='input-group mb-3 d-flex justify-content-center'>
-    <input style='margin-left: 20%' type='text' id='user' class='form-control marg' placeholder='Player' aria-label='Player'>
-    <span class='input-group-text'>@</span>
-    <input type='text' id='room' class='form-control' placeholder='Room' aria-label='Room'>
-    <button style='margin-right: 20%' type='button' class='btn btn-primary' id='join'>Join</button>
+    <input style='margin-left: 20%' type='text' id='user' class='form-control marg' placeholder='Player Name (Auto)' aria-label='Player' readonly>
+    <button style='margin-right: 20%' id="random" class="btn btn-primary">Play Random</button>
   </div>
   <div class='d-flex justify-content-center'>
     <canvas class='rounded'></canvas>
