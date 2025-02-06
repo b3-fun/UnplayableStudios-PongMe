@@ -130,9 +130,9 @@ export const basementSendCustomActivity = async ({
 }
 
 export function formatAddress(address: string) {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    return `@${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
 export function formatUsername(username: string) {
-    return username.split('.')[0];
+    return '@' + username.split('.')[0];
 }
