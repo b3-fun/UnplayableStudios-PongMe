@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+
 const Logger = {
   log: (message: string, ...args: any[]) => console.log(`[INFO] ${message}`, ...args),
   error: (message: string, ...args: any[]) => console.error(`[ERROR] ${message}`, ...args),
