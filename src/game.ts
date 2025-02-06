@@ -1,7 +1,7 @@
 import {gameEnv, gameParams} from './globals';
 import {gameStateType, ballType} from './types';
 import {Server} from 'socket.io';
-import {basementSendCustomActivity} from './basement.util';
+import {basementSendCustomActivity, updateForWinner} from './basement.util';
 
 // Returns true if min <= num <= max
 function between(num: number, min: number, max: number) {
@@ -129,6 +129,12 @@ export const playGame = (io: Server, roomName: string, game: gameStateType) => {
         console.error('Winner activity failed:', error);
       }
 
+      try {
+        updateForWinner(game.p1.token).then(()  =>console.log('sent'));
+      } catch (error) {
+        console.error('updateForWinner activity failed:', error);
+      }
+
       //send to player 2
       try {
         basementSendCustomActivity({
@@ -156,6 +162,12 @@ export const playGame = (io: Server, roomName: string, game: gameStateType) => {
 
       } catch (error) {
         console.error('Winner activity failed:', error);
+      }
+
+      try {
+        updateForWinner(game.p2.token).then(()  =>console.log('sent'));
+      } catch (error) {
+        console.error('updateForWinner activity failed:', error);
       }
 
       //send to player 1
