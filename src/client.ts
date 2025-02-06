@@ -183,14 +183,14 @@ pauseDiv.onclick = () => {
     } else {
       alert('You Lost!');
     }
-    window.location.href = '/';
+    window.location.href = getRedirectUrl();
   });
 
   socket.on('interrupt', (data: { code: number }) => {
     switch (data.code) {
       case 0:
         alert('Other player disconnected');
-        window.location.href = '/';
+        window.location.href = getRedirectUrl();
         break;
       case 1:
         if (player.number === 2) console.log('Other player paused');
@@ -258,4 +258,17 @@ function formatGameScore() {
   
   // Always show p2 (first player to join) on the right side
   return `${game.state.p2.name} vs ${game.state.p1.name} (${game.state.p2.score} - ${game.state.p1.score})`;
+}
+
+// Add this helper function at the top of the file
+function getRedirectUrl() {
+  // Get the current token from URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+  
+  // If there's a token, redirect to root with token preserved
+  if (token) {
+    return `/?token=${token}`;
+  }
+  return '/';
 }
