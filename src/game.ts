@@ -1,6 +1,7 @@
 import {gameEnv, gameParams} from './globals';
 import {gameStateType, ballType} from './types';
 import {Server} from 'socket.io';
+import {basementSendCustomActivity} from './basement.util';
 
 // Returns true if min <= num <= max
 function between(num: number, min: number, max: number) {
@@ -116,13 +117,101 @@ export const playGame = (io: Server, roomName: string, game: gameStateType) => {
   // Emits a winnerUpdate when any player reaches winningScore (called on each frame)
   function winnerCheck() {
     if (game.p1.score === gameParams.winningScore) {
+      //send to player 1
+      try {
+        basementSendCustomActivity({
+          launcherJwt: game.p1.token,
+          label: getWinnerMessage(game.p1.name, game.p2.name, game.p1.score, game.p2.score),
+          eventId: 'match'
+        }).then(()  =>console.log('sent'));
+
+      } catch (error) {
+        console.error('Winner activity failed:', error);
+      }
+
+      //send to player 2
+      try {
+        basementSendCustomActivity({
+          launcherJwt: game.p2.token,
+          label: getLoserMessage(game.p1.name, game.p2.name, game.p1.score, game.p2.score),
+          eventId: 'match'
+        }).then(()  =>console.log('sent'));
+
+      } catch (error) {
+        console.error('Loser activity failed:', error);
+      }
+
       io.to(roomName).emit('winnerUpdate', {winnerNumber: 1});
       game.p1.paused = true;
+
+
     } else if (game.p2.score === gameParams.winningScore) {
+      //send to player 2
+      try {
+        basementSendCustomActivity({
+          launcherJwt: game.p2.token,
+          label: getWinnerMessage(game.p2.name, game.p1.name, game.p2.score, game.p1.score),
+          eventId: 'match'
+        }).then(()  =>console.log('sent'));
+
+      } catch (error) {
+        console.error('Winner activity failed:', error);
+      }
+
+      //send to player 1
+      try {
+        basementSendCustomActivity({
+          launcherJwt: game.p1.token,
+          label: getLoserMessage(game.p2.name, game.p1.name, game.p2.score, game.p1.score),
+          eventId: 'match'
+        }).then(()  =>console.log('sent'));
+
+      } catch (error) {
+        console.error('Loser activity failed:', error);
+      }
+
       io.to(roomName).emit('winnerUpdate', {winnerNumber: 2});
       game.p1.paused = true;
     }
   }
+
+  //send to player 1
+  try {
+    basementSendCustomActivity({
+      launcherJwt: game.p1.token,
+      label: getStartGameMessage(game.p2.name),
+      eventId: 'match'
+    }).then(()  =>console.log('sent'));
+
+  } catch (error) {
+    console.error('Live activity failed', error);
+  }
+
+  //send to player 2
+  try {
+    basementSendCustomActivity({
+      launcherJwt: game.p2.token,
+      label: getStartGameMessage(game.p1.name),
+      eventId: 'match'
+    }).then(()  =>console.log('sent'));
+
+  } catch (error) {
+    console.error('Live activity failed', error);
+  }
+
+
+  function getStartGameMessage(player2: string){
+    return `@{username} vs ${player2} - Game On!`;
+  }
+
+  function getWinnerMessage(winner: string, loser: string, winnerScore: number, loserScore: number){
+    return `@{username} Victory! You defeated ${loser} ${winnerScore}-${loserScore}`
+  }
+
+  function getLoserMessage(winner: string, loser: string, winnerScore: number, loserScore: number){
+    return `@{username} Match ended: ${winner} won ${winnerScore}-${loserScore}`;
+  }
+
 
   // Game loop
   game.mainLoop = setInterval(() => {

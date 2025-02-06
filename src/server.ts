@@ -1,7 +1,11 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import {Server, Socket} from 'socket.io';
 import {playGame} from './game';
 import {gameStateType} from './types';
 import {gameEnv, gameParams, games, gameState} from './globals';
+import {formatAddress, formatUsername} from './basement.util';
 
 const clients: { client: Socket; roomName: string }[] = [];
 
@@ -9,6 +13,7 @@ const clients: { client: Socket; roomName: string }[] = [];
 interface WaitingPlayer {
   socket: Socket;
   playerName: string;
+  playerToken: string;
 }
 
 // Update the waitingPlayers array type
@@ -27,14 +32,10 @@ function verifyToken(token: string): string | null {
     const base64Payload = token.split('.')[1];
     const payload = Buffer.from(base64Payload, 'base64').toString();
     const decoded = JSON.parse(payload) as B3TokenPayload;
-    return decoded.username || formatAddress(decoded.address);
+    return decoded.username ? formatUsername(decoded.username) : formatAddress(decoded.address);
   } catch (err) {
     return null;
   }
-}
-
-function formatAddress(address: string) {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
 // Handle events emitted by client to socket.io server.
@@ -47,7 +48,7 @@ export function handleClient(client: Socket, io: Server) {
   }
 
   function joinRandomGame(
-    data: { playerName: string; token?: string },
+    data: { playerName: string; token: string },
     callback: (error?: string) => void,
   ) {
     // Verify token if provided
@@ -74,7 +75,9 @@ export function handleClient(client: Socket, io: Server) {
       const game = JSON.parse(JSON.stringify(gameState));
       // Put the waiting player (first to join) on the right side (p2)
       game.p2.name = opponent.playerName;  
+      game.p2.token = opponent.playerToken;
       game.p1.name = data.playerName;  // Put the new player on the left side (p1)
+      game.p1.token = data.token;
       games.set(roomName, game);
 
       // Join both players to room
@@ -105,7 +108,8 @@ export function handleClient(client: Socket, io: Server) {
       // Add to waiting queue with player name
       waitingPlayers.push({
         socket: client,
-        playerName: data.playerName
+        playerName: data.playerName,
+        playerToken: data.token
       });
       callback();
     }

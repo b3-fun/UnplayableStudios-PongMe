@@ -1,5 +1,6 @@
 import {io} from 'socket.io-client';
 import {gameEnvType, gameStateType} from './types';
+import {formatAddress, formatUsername} from './basement.util';
 
 // Update the JWT parsing function to match your format
 function decodeB3Token(token: string): {
@@ -34,14 +35,11 @@ const context = canvas.getContext('2d')!;
 if (token) {
   const payload = decodeB3Token(token);
   if (payload) {
-    playerInput.value = payload.username ?? formatAddress(payload.address);
+    playerInput.value = payload.username ? formatUsername(payload.username) : formatAddress(payload.address);
     playerInput.setAttribute('disabled', 'true');
   }
 }
 
-function formatAddress(address: string) {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-}
 
 class Game {
   env: gameEnvType;
