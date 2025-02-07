@@ -38,6 +38,7 @@ export type ballType = {
 
 export type playerType = {
   name: string;
+  token: string;
   x: number;
   y: number;
   score: number;

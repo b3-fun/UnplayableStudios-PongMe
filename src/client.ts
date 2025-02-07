@@ -1,5 +1,6 @@
 import { io } from "socket.io-client";
 import { gameEnvType, gameStateType } from "./types";
+import { formatAddress, formatUsername } from "./basement.util";
 
 // Update the JWT parsing function to match your format
 function decodeB3Token(token: string): {
@@ -35,13 +36,11 @@ if (token) {
   const payload = decodeB3Token(token);
   console.log("payload :", payload);
   if (payload) {
-    playerInput.value = payload.username ?? formatAddress(payload.address);
+    playerInput.value = payload.username
+      ? formatUsername(payload.username)
+      : formatAddress(payload.address);
     playerInput.setAttribute("disabled", "true");
   }
-}
-
-function formatAddress(address: string) {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
 class Game {
@@ -194,14 +193,14 @@ randomBtn.onclick = () => {
     } else {
       showAlert("You Lost!");
     }
-    window.location.href = "/";
+    window.location.href = getRedirectUrl();
   });
 
   socket.on("interrupt", (data: { code: number }) => {
     switch (data.code) {
       case 0:
         showAlert("Other player disconnected");
-        window.location.href = "/";
+        window.location.href = getRedirectUrl();
         break;
       case 1:
         if (player.number === 2) console.log("Other player paused");
@@ -268,4 +267,17 @@ function formatGameScore() {
 
   // Always show p2 (first player to join) on the right side
   return `${game.state.p2.name} vs ${game.state.p1.name} (${game.state.p2.score} - ${game.state.p1.score})`;
+}
+
+// Add this helper function at the top of the file
+function getRedirectUrl() {
+  // Get the current token from URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("token");
+
+  // If there's a token, redirect to root with token preserved
+  if (token) {
+    return `/?token=${token}`;
+  }
+  return "/";
 }

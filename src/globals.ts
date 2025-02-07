@@ -58,6 +58,7 @@ export const gameState: gameStateType = {
   },
   p1: {
     name: "",
+    token: "",
     x: gameEnv.p1Location.x,
     y: gameEnv.p1Location.y,
     score: 0,
@@ -65,6 +66,7 @@ export const gameState: gameStateType = {
   },
   p2: {
     name: "",
+    token: "",
     x: gameEnv.p2Location.x,
     y: gameEnv.p2Location.y,
     score: 0,
