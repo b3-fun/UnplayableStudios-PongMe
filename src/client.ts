@@ -26,8 +26,7 @@ const token = urlParams.get("token");
 const socket = io(window.location.href);
 const playerInput = <HTMLInputElement>document.getElementById("user")!;
 const scoreSpan = document.getElementById("score")!;
-const randomBtn = document.getElementById("random")!;
-const pauseDiv = document.getElementById("pause")!;
+const startBtn = document.getElementById("random")!;
 const canvas = document.querySelector("canvas")!;
 const context = canvas.getContext("2d")!;
 
@@ -67,10 +66,11 @@ let game: Game, player: Player;
 
 function disableInputs() {
   playerInput.setAttribute("disabled", "true");
-  randomBtn.setAttribute("disabled", "true");
+  startBtn.setAttribute("disabled", "true");
 }
 
 function showAlert(text: string) {
+  console.log("text :", text);
   const infoText = document.getElementById("info-text")!;
 
   // First fade out
@@ -81,7 +81,9 @@ function showAlert(text: string) {
 }
 
 // Update the joinRandomGame emit to include the token
-randomBtn.onclick = () => {
+startBtn.onclick = () => {
+  showAlert("Waiting for player to join...");
+
   socket.emit(
     "joinRandomGame",
     {
@@ -89,16 +91,16 @@ randomBtn.onclick = () => {
       token: token,
     },
     (error: string) => {
+      console.log("error :", error);
       if (error) {
         showAlert(error);
       } else {
-        showAlert("Waiting for player to join...");
       }
     }
   );
   disableInputs();
   // document.getElementById("score")!.style.visibility = "visible";
-  document.getElementById("info-text")!.textContent = "Waiting for opponent...";
+  //document.getElementById("info-text")!.textContent = "Waiting for opponent...";
 };
 
 // handle socket events
@@ -113,10 +115,14 @@ randomBtn.onclick = () => {
     }) => {
       if (player) return;
       game = new Game(data.gameEnv, data.gameState);
+      console.log("game :", game);
       player = new Player(data.playerNumber, 0);
+      console.log("player :", player);
 
       if (data.roomName) {
+        console.log("data.roomName :", data.roomName);
         game.state.roomName = data.roomName;
+        showAlert("");
       }
 
       // Show initial player names
@@ -129,7 +135,7 @@ randomBtn.onclick = () => {
   );
 
   socket.on("startGame", () => {
-    showAlert("Get ready!");
+    showAlert("");
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "ArrowUp" || e.key === "ArrowDown") {
@@ -197,10 +203,13 @@ randomBtn.onclick = () => {
   });
 
   socket.on("interrupt", (data: { code: number }) => {
+    console.log("code :", data.code);
     switch (data.code) {
       case 0:
         showAlert("Other player disconnected");
-        window.location.href = getRedirectUrl();
+        setTimeout(() => {
+          window.location.href = getRedirectUrl();
+        }, 3000);
         break;
       case 1:
         if (player.number === 2) console.log("Other player paused");
@@ -218,7 +227,7 @@ function draw_canvas() {
   canvas.height = game.env.tableHeight;
   canvas.style.width = canvas.width / 2 + "px";
   canvas.style.height = canvas.height / 2 + "px";
-  canvas.style.backgroundColor = "#3f526d";
+  //canvas.style.backgroundColor = "#3f526d";
 
   if (player.direction) {
     socket.emit("movePlayer", {
