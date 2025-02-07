@@ -33,6 +33,7 @@ const context = canvas.getContext("2d")!;
 // If token exists, decode it and set player name
 if (token) {
   const payload = decodeB3Token(token);
+  console.log("payload :", payload);
   if (payload) {
     playerInput.value = payload.username ?? formatAddress(payload.address);
     playerInput.setAttribute("disabled", "true");
@@ -70,6 +71,16 @@ function disableInputs() {
   randomBtn.setAttribute("disabled", "true");
 }
 
+function showAlert(text: string) {
+  const infoText = document.getElementById("info-text")!;
+
+  // First fade out
+  infoText.classList.add("hidden");
+  // Wait for fade out to complete before updating text and fading in
+  infoText.textContent = text;
+  infoText.classList.remove("hidden");
+}
+
 // Update the joinRandomGame emit to include the token
 randomBtn.onclick = () => {
   socket.emit(
@@ -80,38 +91,15 @@ randomBtn.onclick = () => {
     },
     (error: string) => {
       if (error) {
-        alert(error);
+        showAlert(error);
       } else {
-        alert("Waiting for opponent...");
+        showAlert("Waiting for player to join...");
       }
     }
   );
   disableInputs();
-};
-
-pauseDiv.onclick = () => {
-  if (!game) return;
-  socket.emit(
-    "pauseGame",
-    { playerNumber: player.number, roomName: game.state.roomName },
-    (error: string) => {
-      if (error) {
-        alert(error);
-      }
-    }
-  );
-  if (player.number === 1) {
-    game.state.p1.paused = !game.state.p1.paused;
-  } else {
-    game.state.p2.paused = !game.state.p2.paused;
-  }
-  if (pauseDiv.children[0].hasAttribute("hidden")) {
-    pauseDiv.children[0].removeAttribute("hidden");
-    pauseDiv.children[1].setAttribute("hidden", "hidden");
-  } else {
-    pauseDiv.children[1].removeAttribute("hidden");
-    pauseDiv.children[0].setAttribute("hidden", "hidden");
-  }
+  // document.getElementById("score")!.style.visibility = "visible";
+  document.getElementById("info-text")!.textContent = "Waiting for opponent...";
 };
 
 // handle socket events
@@ -142,6 +130,8 @@ pauseDiv.onclick = () => {
   );
 
   socket.on("startGame", () => {
+    showAlert("Get ready!");
+
     document.addEventListener("keydown", (e) => {
       if (e.key === "ArrowUp" || e.key === "ArrowDown") {
         switch (e.key) {
@@ -200,9 +190,9 @@ pauseDiv.onclick = () => {
 
   socket.on("winnerUpdate", (data: { winnerNumber: number }) => {
     if (player.number === data.winnerNumber) {
-      alert("You Won!");
+      showAlert("You Won!");
     } else {
-      alert("You Lost!");
+      showAlert("You Lost!");
     }
     window.location.href = "/";
   });
@@ -210,7 +200,7 @@ pauseDiv.onclick = () => {
   socket.on("interrupt", (data: { code: number }) => {
     switch (data.code) {
       case 0:
-        alert("Other player disconnected");
+        showAlert("Other player disconnected");
         window.location.href = "/";
         break;
       case 1:

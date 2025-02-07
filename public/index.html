@@ -4,45 +4,107 @@
   <meta charset='UTF-8'>
   <title>PONG</title>
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #FFFF25;
+      /* Bobby gave #FFFF25 but I color picked from real arcade machine and it gave other color */
+      background-color: #fef164;
       margin: 0;
-      padding: 20px;
+      padding: 0;  /* Remove padding */
       min-height: 100vh;
     }
+
+    .page-container {
+      display: flex;
+      min-height: 100vh;
+          /* border-top: 30px solid black; */
+    }
+
+    .side-decoration {
+      position: relative;
+      background-color: black;
+      width: 10%;  /* Adjust as needed */
+    }
+    .triangle-left {
+      position: absolute;
+      top: 0;
+      right: -58px;
+      width: 0;
+      height: 100%;
+      border-top: 80vh solid transparent;
+      border-left: 58px solid black;
+      border-bottom: 20vh solid transparent;
+      background-color: #fef164;
+    }
+    .triangle-right {
+      position: absolute;
+      top: 0;
+      left: -58px;
+      width: 0;
+      height: 100%;
+      border-top: 80vh solid transparent;
+      border-right: 58px solid black;
+      border-bottom: 20vh solid transparent;
+      background-color: #fef164;
+    }
+
+    .main-content {
+      width: 100%;  /* Adjust as needed */
+      padding: 20px;
+    }
+
     .arcade-cabinet {
-      background-color: #FFFF25;
+      background-color: #fef164;
       max-width: 800px;
       margin: 20px auto;
       position: relative;
+      z-index: 1;
     }
     .screen-container {
       position: relative;
-      margin: 0 auto 40px;
-      width: 69%; /* nice */
+      margin: 0 auto 70px;
+      width: 69%;
       padding-top: 20px;
       transform: perspective(1000px) rotateX(-20deg);
       transform-origin: center bottom;
+      font-family: 'Jersey 10', sans-serif;
     }
     .screen-background {
       background-color: #000;
       position: absolute;
-      top: 0px;
-      left: -20px;
-      right: -20px;
-      bottom: 0px;
-      border-radius: 40px 40px 100px 100px;
+      top: -10px;
+      left: -30px;
+      right: -30px;
+      bottom: -10px;
+      border-radius: 40px;
       transform: scale(1.1);
+
     }
     .screen-bezel {
       background-color: #000;
       position: relative;
-      padding: 20px;
+      padding: 30px;
       transform: perspective(1000px) rotateX(20deg);
       transform-origin: center center;
       border-radius: 30px 30px 80px 80px;
+      box-shadow: 
+        inset 0 2px 40px rgba(255,255,255,0.05),
+        inset 0 -2px 40px rgba(0,0,0,0.9);
+      z-index: 2;
+    }
+    .screen-bezel::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 30px 30px 80px 80px;
       box-shadow: inset 0 0 20px rgba(255,255,255,0.1);
+      pointer-events: none;
+      z-index: 3;
     }
     .screen-bezel::before {
       content: '';
@@ -51,11 +113,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: radial-gradient(
-        circle at center,
-        transparent 0%,
-        rgba(0, 0, 0, 0.3) 100%
-      );
+      background: rgba(0, 0, 0, 0.5);
       border-radius: 30px 30px 80px 80px;
       z-index: 1;
     }
@@ -65,24 +123,13 @@
       border-radius: 20px 20px 60px 60px;
       overflow: hidden;
       transform: translateZ(20px);
-      box-shadow: inset 0 2px 15px rgba(255,255,255,0.1);
-      &::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        right: -50%;
-        bottom: -50%;
-        background: radial-gradient(
-          circle at center,
-          rgba(255,255,255,0.1) 0%,
-          transparent 70%
-        );
-        pointer-events: none;
-        z-index: 2;
-      }
+      box-shadow: 
+        inset 0 2px 30px rgba(255,255,255,0.05),
+        inset 0 -2px 30px rgba(0,0,0,0.8),
+        0 0 20px rgba(0,0,0,0.5);
+      margin: 10px;
     }
-    .screen-content::before {
+    /* .screen-content::before {
       content: '';
       position: absolute;
       top: -150%;
@@ -102,7 +149,7 @@
       z-index: 2;
       animation: scanline 12s linear infinite;
       border-radius: 20px 20px 60px 60px;
-    }
+    } */
     @keyframes scanline {
       0% {
         transform: translateY(-50%) rotate(45deg);
@@ -121,7 +168,7 @@
       background: rgba(0, 0, 0, 0.4);
       transform: translateY(10px) translateZ(-50px);
       filter: blur(20px);
-      z-index: -1;
+      z-index: -2;
     }
     .screen-container::before {
       content: '';
@@ -133,63 +180,194 @@
       border-radius: 40px 40px 100px 100px;
       box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
       pointer-events: none;
-      z-index: 4;
+      z-index: 2;
     }
     .game-title {
-      font-family: 'Arial Black', sans-serif;
-      font-size: 48px;
       text-align: center;
-      margin-bottom: 100px;
-      color: #000;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      margin-bottom: 110px;
+    }
+    .game-title img {
+      width: 200px;
+      height: auto;
+      display: block;
+      margin: 0 auto 20px;
     }
     .controls-panel {
-      background-color: #b6b1b1;
-      
-      padding: 20px;
-      border-radius: 5px;
+      background: #e6e6e6;
+      padding: 40px;
+      border-radius: 4px;
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
       align-items: center;
-      transform: perspective(1000px) rotateX(20deg);
+      transform: perspective(1000px) rotateX(32deg);
       transform-origin: center bottom;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      box-shadow: 
+        inset 0 1px 2px rgba(255,255,255,0.2),
+        inset 0 -1px 2px rgba(0,0,0,0.2),
+        0 3px 10px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: visible;
     }
+
+    .hidden {
+      opacity: 0;
+      transition: opacity 0.3s ease-out;
+    }
+
+    #info-text {
+      opacity: 1;
+      transition: opacity 0.3s ease-in;
+    }
+
+    /* Replace the existing mounting pins with 6 new ones */
+    .controls-panel::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 0;
+      right: 0;
+      height: 12px;
+    }
+
+    .controls-panel::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 0;
+      right: 0;
+      height: 12px;
+    }
+
+    /* Add top mounting pins */
+    .controls-panel::before {
+      background-image: radial-gradient(circle at 1% 50%, #71676a 0, #71676a 3px, transparent 4px),
+                        radial-gradient(circle at 50% 50%, #71676a 0, #71676a 3px, transparent 4px),
+                        radial-gradient(circle at 99% 50%, #71676a 0, #71676a 3px, transparent 4px);
+    }
+
+    /* Add bottom mounting pins */
+    .controls-panel::after {
+      background-image: radial-gradient(circle at 1% 50%, #71676a 0, #71676a 3px, transparent 4px),
+                        radial-gradient(circle at 50% 50%, #71676a 0, #71676a 3px, transparent 4px),
+                        radial-gradient(circle at 99% 50%, #71676a 0, #71676a 3px, transparent 4px);
+    }
+
     .start-button {
       background-color: #ff0000;
       color: white;
-      padding: 15px 30px;
       border-radius: 50%;
-      width: 100px;
-      height: 100px;
-      border: 8px solid #8b0000;
+      width: 60px;
+      height: 60px;
+      border: 6px solid #8b0000;
       cursor: pointer;
       font-weight: bold;
       text-transform: uppercase;
+      font-size: 12px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-    .dial {
-      width: 100px;
-      height: 100px;
-      background-color: #000;
-      border-radius: 50%;
-      border: 8px solid #333;
+
+      -webkit-transition: all 0s ease-out;
+      -moz-transition: all 0s ease-out;
+      -o-transition: all 0s ease-out;
+      -ms-transition: all 0s ease-out;
+      transition: all 0s ease-out;
+      display: block;
+      font-family: Arial, "Helvetica", sans-serif;
+      font-size: 14px;
+      color: #fff;
+      text-decoration: none;
+      text-align: center;
+      text-shadow: 0px -1px 0px rgba(0,0,0,0.4);
+      position: relative;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      border: none;
+
+      border-left: solid 1px #C02B21;
+      background: #DE463B;
+
+      -webkit-box-shadow: 0px 5px 0px 0px #C02B21;
+      box-shadow: 0px 5px 0px 0px #C02B21;
+
+
     }
+
+    .start-button:active {
+  -webkit-box-shadow: 0px 2px 0px 0px #C02B21;
+  box-shadow: 0px 2px 0px 0px #C02B21;
+  top: 3px;
+
+}
+/* .start-button:before {
+
+  content: "1";
+  width: 35px;
+  height: 25px;
+  display: block;
+  position: absolute;
+  padding-top: 10px;
+  line-height: 20px;
+  top: 0px;
+  margin-left: -54px;
+  font-size: 16px;
+  font-weight: bold;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+
+
+  border-right: solid 1px #C02B21;
+  background: #DE463B;
+  -webkit-box-shadow: 0px 5px 0px 0px #C02B21;
+  box-shadow: 0px 5px 0px 0px #C02B21;
+} */
+
+.start-button:active:before {
+  top: -3px;
+  -webkit-box-shadow: 0px 5px 0px 0px #C02B21, 6px 4px 2px rgba(0,0,0,0.3);
+  box-shadow: 0px 5px 0px 0px #C02B21, 6px 4px 2px rgba(0,0,0,0.3);
+}
+
+
+    .dial {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 
+        0 2px 4px rgba(0,0,0,0.4),
+        inset 0 2px 2px rgba(255,255,255,0.1);
+    }
+
+    /* Add dial indicator line */
+    .dial::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 2px;
+      height: 40%;
+      background: #fff;
+      transform: translate(-50%, -50%);
+      border-radius: 1px;
+    }
+
     canvas {
-      background-color: #000;
-      width: 100%;
-      height: 400px;
+      /* background-color: #000; */
+      width: calc(100% - 20px);
+      height: 300px;
       display: block;
       position: relative;
       z-index: 1;
+      margin: 10px;
+      /* box-shadow: inset 0 0 20px rgba(0,0,0,0.8); */
     }
     #score {
       color: white;
       text-shadow: 0 0 10px rgba(255,255,255,0.5);
       position: relative;
       z-index: 3;
+      visibility: hidden;
     }
     .screen-content::after {
       content: '';
@@ -212,20 +390,6 @@
       border-radius: 20px 20px 60px 60px;
       pointer-events: none;
       z-index: 3;
-    }
-    .screen-bezel::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      border-radius: 30px 30px 80px 80px;
-      box-shadow: 
-        inset 0 0 50px rgba(0,0,0,0.8),
-        inset 0 0 20px rgba(255,255,255,0.1);
-      pointer-events: none;
-      z-index: 2;
     }
     @keyframes flicker {
   0% {
@@ -387,43 +551,152 @@
 .crt {
   animation: textShadow 1.6s infinite;
 }
+/* Add new frame overlay */
+.screen-frame {
+  position: absolute;
+  top: -15px;
+  left: -35px;
+  right: -35px;
+  bottom: -15px;
+  background-image: url(https://cdn.b3.fun/computer-overlay.gif);
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 40px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.7;
+}
+
+/* Add these new styles */
+.atari-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  animation: fadeInOut 4s ease-in-out forwards;
+}
+
+.atari-logo img {
+  width: 200px;
+  filter: invert(1); /* This makes the black logo white */
+  opacity: 0.8;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Add these new styles */
+.arcade-cabinet {
+  position: relative;
+  z-index: 1;
+}
+
+.background-decoration {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 25%;
+  background-color: black;
+  z-index: 0;
+}
+
+.decoration-left {
+  left: 0;
+  clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
+}
+
+.decoration-right {
+  right: 0;
+  clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+#info-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  visibility: hidden;
+  animation: showAfterLogo 0s 4s forwards;
+}
+
+@keyframes showAfterLogo {
+  0% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}
+
   </style>
 </head>
 <body>
-<div class='arcade-cabinet'>
-  <div class='game-title'>PONG</div>
-  
-  <div class='screen-container'>
-    <div class='screen-background'></div>
-    <div class='screen-bezel '>
-      <div class=' crt'>
-      <div class='screen-content '>
-        <div id='score' class='text-xl text-center text-white mb-4'>Waiting for players...</div>
-        <canvas class='rounded'></canvas>
+  <div class="page-container">
+    <div class="side-decoration">
+      <div class="triangle-left"></div>
+    </div>
+    <div class="main-content">
+      <div class='arcade-cabinet'>
+        <div class='game-title'>
+          <img src="https://cdn.b3.fun/pong-logo.png" alt="PONG" />
+        </div>
+        
+        <div class='screen-container'>
+          <div class='screen-background'></div>
+          <div class='screen-bezel crt'>
+            <div class='screen-content'>
+              <div id='score' class='text-xl text-center text-white my-4'>Score</div>
+              <div id='info-text' class='text-xl text-center text-white my-4'>Press start to play</div>
+              <div class="atari-logo">
+                <img src="https://cdn.b3.fun/atari-logo.png" alt="Atari" />
+              </div>
+              <canvas class='rounded'></canvas>
+            </div>
+          <div class='screen-frame'></div>
+
+          </div>
+        </div>
+
+        <div class='controls-panel'>
+          <button id="random" class='start-button flex items-center justify-center'>
+            <span class='text-white'></span>Start</span>
+          </button>
+        </div>
+
+        <input class='hidden' type='text' id='user' placeholder='Player Name (Auto)' aria-label='Player' readonly>
+        
+        <div id='pause' class='hidden'>
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-pause-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M5 6.25a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5zm3.5 0a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5z"/>
+          </svg>
+          <svg hidden xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-play-circle hidden" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
+          </svg>
+        </div>
       </div>
     </div>
+    <div class="side-decoration">
+      <div class="triangle-right"></div>
     </div>
   </div>
 
-  <div class='controls-panel'>
-    <button id="random" class='start-button'>Start Game</button>
-    <div class='dial'></div>
-  </div>
-
-  <input class='hidden' type='text' id='user' placeholder='Player Name (Auto)' aria-label='Player' readonly>
-  
-  <div id='pause' class='hidden'>
-    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-pause-circle" viewBox="0 0 16 16">
-      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-      <path d="M5 6.25a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5zm3.5 0a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5z"/>
-    </svg>
-    <svg hidden xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-play-circle hidden" viewBox="0 0 16 16">
-      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-      <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
-    </svg>
-  </div>
-</div>
-
-<script type='module' src='client.js'></script>
+  <script type='module' src='client.js'></script>
 </body>
 </html>

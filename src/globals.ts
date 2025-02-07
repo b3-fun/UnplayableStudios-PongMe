@@ -1,4 +1,4 @@
-import {gameEnvType, gameStateType} from './types';
+import { gameEnvType, gameStateType } from "./types";
 
 // Maps a room name to a gameState
 export const games = new Map();
@@ -7,7 +7,7 @@ export const games = new Map();
 export const gameEnv: gameEnvType = {
   frameRate: 20,
   tableHeight: 800,
-  tableWidth: 1500,
+  tableWidth: 1000,
   paddleHeight: 150,
   paddleWidth: 20,
   ballRadius: 10,
@@ -34,7 +34,7 @@ export const gameEnv: gameEnvType = {
 
 // Parameters for game logic, used only by server.
 export const gameParams = {
-  roundBreak: 1500,
+  roundBreak: 2000,
   playerSpeed: 11,
   winningScore: 5,
   ballVelocity: {
@@ -57,14 +57,14 @@ export const gameState: gameStateType = {
     speed: gameParams.ballVelocity.v,
   },
   p1: {
-    name: '',
+    name: "",
     x: gameEnv.p1Location.x,
     y: gameEnv.p1Location.y,
     score: 0,
     paused: false,
   },
   p2: {
-    name: '',
+    name: "",
     x: gameEnv.p2Location.x,
     y: gameEnv.p2Location.y,
     score: 0,
