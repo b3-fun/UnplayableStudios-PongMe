@@ -17,26 +17,45 @@ export const collides = (ball: ballType, playerX: number, playerY: number) => {
     left: playerX,
     right: playerX + gameEnv.paddleWidth,
   };
-  const ballCenter = {
-    x: ball.x + gameEnv.ballRadius,
-    y: ball.y - gameEnv.ballRadius,
+
+  // Calculate ball boundaries
+  const ballBounds = {
+    left: ball.x,
+    right: ball.x + 2 * gameEnv.ballRadius,
+    top: ball.y,
+    bottom: ball.y + 2 * gameEnv.ballRadius,
+    centerX: ball.x + gameEnv.ballRadius,
+    centerY: ball.y + gameEnv.ballRadius
   };
 
+  // Check paddle collision
   if (
-      between(ballCenter.x, player.left, player.right) &&
-      between(ballCenter.y, player.top, player.bottom)
+    ballBounds.right >= player.left &&
+    ballBounds.left <= player.right &&
+    ballBounds.bottom >= player.top &&
+    ballBounds.top <= player.bottom
   ) {
     const collidePoint =
-        (ballCenter.y - (player.top + gameEnv.paddleHeight / 2)) /
-        (gameEnv.paddleHeight / 2);
+      (ballBounds.centerY - (player.top + gameEnv.paddleHeight / 2)) /
+      (gameEnv.paddleHeight / 2);
     const angle = (collidePoint * Math.PI) / 4;
     const direction = ball.x < gameEnv.tableCenter.x ? 1 : -1;
     ball.vx = Math.ceil(direction * ball.speed * Math.cos(angle));
     ball.vy = Math.ceil(ball.speed * Math.sin(angle));
     ball.speed += 1;
     return true;
-  } else if (ballCenter.y <= 0 || ballCenter.y >= gameEnv.tableHeight) {
+  } 
+  // Check wall collision
+  else if (ballBounds.top <= 0 || ballBounds.bottom >= gameEnv.tableHeight) {
     ball.vy = -ball.vy;
+    
+    // Keep ball in bounds
+    if (ballBounds.top <= 0) {
+      ball.y = 0;
+    }
+    if (ballBounds.bottom >= gameEnv.tableHeight) {
+      ball.y = gameEnv.tableHeight - 2 * gameEnv.ballRadius;
+    }
     return true;
   }
   return false;
