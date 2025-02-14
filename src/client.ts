@@ -66,20 +66,17 @@ let game: Game, player: Player;
 
 // Replace radio button constants with regular button elements
 const singlePlayerBtn = document.getElementById("single") as HTMLButtonElement;
-console.log("singlePlayerBtn :", singlePlayerBtn);
 const multiPlayerBtn = document.getElementById("multi") as HTMLButtonElement;
-console.log("multiPlayerBtn :", multiPlayerBtn);
 
 function disableInputs() {
   playerInput.setAttribute("disabled", "true");
   singlePlayerBtn.setAttribute("disabled", "true");
   multiPlayerBtn.setAttribute("disabled", "true");
 }
+const infoText = document.getElementById("info-text")!;
 
 function showAlert(text: string) {
   console.log("text :", text);
-  const infoText = document.getElementById("info-text")!;
-
   // First fade out
   infoText.classList.add("hidden");
   // Wait for fade out to complete before updating text and fading in
