@@ -20,12 +20,12 @@ export const collides = (ball: ballType, playerX: number, playerY: number) => {
 
   // Calculate ball boundaries
   const ballBounds = {
-    left: ball.x,
-    right: ball.x + 2 * gameEnv.ballRadius,
-    top: ball.y,
-    bottom: ball.y + 2 * gameEnv.ballRadius,
-    centerX: ball.x + gameEnv.ballRadius,
-    centerY: ball.y + gameEnv.ballRadius,
+    left: ball.x - gameEnv.ballRadius,
+    right: ball.x + gameEnv.ballRadius,
+    top: ball.y - gameEnv.ballRadius,
+    bottom: ball.y + gameEnv.ballRadius,
+    centerX: ball.x,
+    centerY: ball.y,
   };
 
   // Check paddle collision
@@ -45,19 +45,30 @@ export const collides = (ball: ballType, playerX: number, playerY: number) => {
     ball.speed += 1;
     return true;
   }
-  // Check wall collision
+  // Check wall collision and enforce boundaries
   else if (ballBounds.top <= 0 || ballBounds.bottom >= gameEnv.tableHeight) {
     ball.vy = -ball.vy;
-
-    // Keep ball in bounds
+    
+    // Enforce boundaries immediately
     if (ballBounds.top <= 0) {
-      ball.y = 0;
+      // Set the ball position so its center is one radius from the boundary
+      ball.y = gameEnv.ballRadius;
     }
     if (ballBounds.bottom >= gameEnv.tableHeight) {
-      ball.y = gameEnv.tableHeight - 2 * gameEnv.ballRadius;
+      // Set the ball position so its center is one radius from the bottom
+      ball.y = gameEnv.tableHeight - gameEnv.ballRadius;
     }
     return true;
   }
+
+  // Additional boundary enforcement
+  if (ball.y - gameEnv.ballRadius < 0) {
+    ball.y = gameEnv.ballRadius;
+  }
+  if (ball.y + gameEnv.ballRadius > gameEnv.tableHeight) {
+    ball.y = gameEnv.tableHeight - gameEnv.ballRadius;
+  }
+
   return false;
 };
 
