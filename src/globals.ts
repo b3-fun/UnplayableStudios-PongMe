@@ -36,7 +36,7 @@ export const gameEnv: gameEnvType = {
 export const gameParams = {
   roundBreak: 2000,
   playerSpeed: 11,
-  winningScore: 50,
+  winningScore: 5,
   ballVelocity: {
     x: 6,
     y: 6,
