@@ -48,7 +48,7 @@ export const collides = (ball: ballType, playerX: number, playerY: number) => {
   // Check wall collision and enforce boundaries
   else if (ballBounds.top <= 0 || ballBounds.bottom >= gameEnv.tableHeight) {
     ball.vy = -ball.vy;
-    
+
     // Enforce boundaries immediately
     if (ballBounds.top <= 0) {
       // Set the ball position so its center is one radius from the boundary
@@ -86,8 +86,6 @@ export const playGame = (io: Server, roomName: string, game: gameStateType) => {
 
   // Checks if ball collides with wall or paddle (called on each frame).
   function collisionCheck() {
-    console.log("game :", game);
-
     let hit;
     if (game.ball.x < gameEnv.tableCenter.x) {
       hit = collides(game.ball, game.p2.x, game.p2.y);

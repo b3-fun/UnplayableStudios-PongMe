@@ -33,7 +33,6 @@ const context = canvas.getContext("2d")!;
 // If token exists, decode it and set player name
 if (token) {
   const payload = decodeB3Token(token);
-  console.log("payload :", payload);
   if (payload) {
     playerInput.value = payload.username
       ? formatUsername(payload.username)
@@ -67,18 +66,19 @@ let game: Game, player: Player;
 // Replace radio button constants with regular button elements
 const singlePlayerBtn = document.getElementById("single") as HTMLButtonElement;
 const multiPlayerBtn = document.getElementById("multi") as HTMLButtonElement;
+const backBtn = document.getElementById("back") as HTMLButtonElement;
 
 function disableInputs() {
   playerInput.setAttribute("disabled", "true");
   singlePlayerBtn.setAttribute("disabled", "true");
   multiPlayerBtn.setAttribute("disabled", "true");
 }
-const infoText = document.getElementById("info-text")!;
+const infoElement = document.getElementById("info")!;
+const infoText = infoElement.querySelector(".info-text")!;
 
 function showAlert(text: string) {
-  console.log("text :", text);
   // First fade out
-  infoText.classList.add("hidden");
+  //infoText.classList.add("hidden");
   // Wait for fade out to complete before updating text and fading in
   infoText.textContent = text;
   infoText.classList.remove("hidden");
@@ -87,11 +87,22 @@ function showAlert(text: string) {
 // Replace radio change handlers with click handlers
 singlePlayerBtn.onclick = () => {
   // TODO: Implement single player mode
-  console.log("Single player selected");
+  backBtn.classList.remove("hidden");
+  multiPlayerBtn.classList.add("hidden");
+  singlePlayerBtn.classList.add("hidden");
+};
+
+backBtn.onclick = () => {
+  window.location.href = getRedirectUrl();
+  backBtn.classList.add("hidden");
+  multiPlayerBtn.classList.remove("hidden");
+  singlePlayerBtn.classList.remove("hidden");
 };
 
 multiPlayerBtn.onclick = () => {
-  console.log("Multi player selected");
+  backBtn.classList.remove("hidden");
+  multiPlayerBtn.classList.add("hidden");
+  singlePlayerBtn.classList.add("hidden");
   showAlert("Waiting for player to join...");
 
   socket.emit(
@@ -121,12 +132,9 @@ multiPlayerBtn.onclick = () => {
     }) => {
       if (player) return;
       game = new Game(data.gameEnv, data.gameState);
-      console.log("game :", game);
       player = new Player(data.playerNumber, 0);
-      console.log("player :", player);
 
       if (data.roomName) {
-        console.log("data.roomName :", data.roomName);
         game.state.roomName = data.roomName;
         showAlert("");
       }
@@ -142,6 +150,7 @@ multiPlayerBtn.onclick = () => {
 
   socket.on("startGame", () => {
     scoreElement.style.visibility = "visible";
+    backBtn.classList.add("hidden");
     showAlert("Prepare to start!");
     setTimeout(() => {
       showAlert("");
@@ -213,7 +222,6 @@ multiPlayerBtn.onclick = () => {
   });
 
   socket.on("interrupt", (data: { code: number }) => {
-    console.log("code :", data.code);
     switch (data.code) {
       case 0:
         showAlert("Other player disconnected");
@@ -282,7 +290,6 @@ function draw_canvas() {
 
 // Update the formatGameScore function to always show first player (p2) on right
 function formatGameScore() {
-  console.log("format game score");
   if (!game) return "Waiting for players...";
 
   // Always show p2 (first player to join) on the right side
