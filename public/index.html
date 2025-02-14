@@ -14,6 +14,7 @@
       margin: 0;
       padding: 0;  /* Remove padding */
       min-height: 100vh;
+      letter-spacing: 0.05em;
     }
 
     .page-container {
@@ -22,33 +23,6 @@
           /* border-top: 30px solid black; */
     }
 
-    .side-decoration {
-      position: relative;
-      background-color: black;
-      width: 10%;  /* Adjust as needed */
-    }
-    .triangle-left {
-      position: absolute;
-      top: 0;
-      right: -58px;
-      width: 0;
-      height: 100%;
-      border-top: 80vh solid transparent;
-      border-left: 58px solid black;
-      border-bottom: 20vh solid transparent;
-      background-color: #fef164;
-    }
-    .triangle-right {
-      position: absolute;
-      top: 0;
-      left: -58px;
-      width: 0;
-      height: 100%;
-      border-top: 80vh solid transparent;
-      border-right: 58px solid black;
-      border-bottom: 20vh solid transparent;
-      background-color: #fef164;
-    }
 
     .main-content {
       width: 100%;  /* Adjust as needed */
@@ -57,7 +31,6 @@
 
     .arcade-cabinet {
       background-color: #fef164;
-      max-width: 800px;
       margin: 20px auto;
       position: relative;
       z-index: 1;
@@ -65,7 +38,7 @@
     .screen-container {
       position: relative;
       margin: 0 auto 70px;
-      width: 69%;
+      max-width: 666px;
       padding-top: 20px;
       transform: perspective(1000px) rotateX(-20deg);
       transform-origin: center bottom;
@@ -128,29 +101,9 @@
         inset 0 -2px 30px rgba(0,0,0,0.8),
         0 0 20px rgba(0,0,0,0.5);
       margin: 10px 10 20px 10px;
-      min-height: 400px;
+      height: 450px;
     }
-    /* .screen-content::before {
-      content: '';
-      position: absolute;
-      top: -150%;
-      left: -150%;
-      width: 400%;
-      height: 400%;
-      background: linear-gradient(
-        45deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.02) 30%,
-        rgba(255, 255, 255, 0.04) 50%,
-        rgba(255, 255, 255, 0.02) 70%,
-        transparent 100%
-      );
-      transform: rotate(45deg);
-      pointer-events: none;
-      z-index: 2;
-      animation: scanline 12s linear infinite;
-      border-radius: 20px 20px 60px 60px;
-    } */
+
     @keyframes scanline {
       0% {
         transform: translateY(-50%) rotate(45deg);
@@ -185,7 +138,7 @@
     }
     .game-title {
       text-align: center;
-      margin-bottom: 110px;
+      margin-bottom: 200px;
     }
     .game-title img {
       width: 200px;
@@ -220,139 +173,6 @@
       transition: opacity 0.3s ease-in;
     }
 
-    /* Replace the existing mounting pins with 6 new ones */
-    .controls-panel::before {
-      content: '';
-      position: absolute;
-      top: 4px;
-      left: 0;
-      right: 0;
-      height: 12px;
-    }
-
-    .controls-panel::after {
-      content: '';
-      position: absolute;
-      bottom: 4px;
-      left: 0;
-      right: 0;
-      height: 12px;
-    }
-
-    /* Add top mounting pins */
-    .controls-panel::before {
-      background-image: radial-gradient(circle at 1% 50%, #71676a 0, #71676a 3px, transparent 4px),
-                        radial-gradient(circle at 50% 50%, #71676a 0, #71676a 3px, transparent 4px),
-                        radial-gradient(circle at 99% 50%, #71676a 0, #71676a 3px, transparent 4px);
-    }
-
-    /* Add bottom mounting pins */
-    .controls-panel::after {
-      background-image: radial-gradient(circle at 1% 50%, #71676a 0, #71676a 3px, transparent 4px),
-                        radial-gradient(circle at 50% 50%, #71676a 0, #71676a 3px, transparent 4px),
-                        radial-gradient(circle at 99% 50%, #71676a 0, #71676a 3px, transparent 4px);
-    }
-
-    .start-button {
-      background-color: #ff0000;
-      color: white;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      border: 6px solid #8b0000;
-      cursor: pointer;
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 12px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-
-      -webkit-transition: all 0s ease-out;
-      -moz-transition: all 0s ease-out;
-      -o-transition: all 0s ease-out;
-      -ms-transition: all 0s ease-out;
-      transition: all 0s ease-out;
-      display: block;
-      font-family: Arial, "Helvetica", sans-serif;
-      font-size: 14px;
-      color: #fff;
-      text-decoration: none;
-      text-align: center;
-      text-shadow: 0px -1px 0px rgba(0,0,0,0.4);
-      position: relative;
-      cursor: pointer;
-      border: none;
-
-      border-left: solid 1px #C02B21;
-      background: #DE463B;
-
-      -webkit-box-shadow: 0px 5px 0px 0px #C02B21;
-      box-shadow: 0px 5px 0px 0px #C02B21;
-
-
-    }
-
-    .start-button:active {
-  -webkit-box-shadow: 0px 2px 0px 0px #C02B21;
-  box-shadow: 0px 2px 0px 0px #C02B21;
-  top: 3px;
-
-}
-/* .start-button:before {
-
-  content: "1";
-  width: 35px;
-  height: 25px;
-  display: block;
-  position: absolute;
-  padding-top: 10px;
-  line-height: 20px;
-  top: 0px;
-  margin-left: -54px;
-  font-size: 16px;
-  font-weight: bold;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-
-
-  border-right: solid 1px #C02B21;
-  background: #DE463B;
-  -webkit-box-shadow: 0px 5px 0px 0px #C02B21;
-  box-shadow: 0px 5px 0px 0px #C02B21;
-} */
-
-.start-button:active:before {
-  top: -3px;
-  -webkit-box-shadow: 0px 5px 0px 0px #C02B21, 6px 4px 2px rgba(0,0,0,0.3);
-  box-shadow: 0px 5px 0px 0px #C02B21, 6px 4px 2px rgba(0,0,0,0.3);
-}
-
-
-    .dial {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      position: relative;
-      box-shadow: 
-        0 2px 4px rgba(0,0,0,0.4),
-        inset 0 2px 2px rgba(255,255,255,0.1);
-    }
-
-    /* Add dial indicator line */
-    .dial::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 2px;
-      height: 40%;
-      background: #fff;
-      transform: translate(-50%, -50%);
-      border-radius: 1px;
-    }
-
     canvas {
       /* background-color: #000; */
       width: calc(100% - 20px);
@@ -365,10 +185,13 @@
     }
     #score {
       color: white;
-      text-shadow: 0 0 10px rgba(255,255,255,0.5);
       position: relative;
       z-index: 3;
       visibility: hidden;
+      margin-top: 50px;
+      font-size: 20px;
+      white-space: break-spaces; 
+
     }
     .screen-content::after {
       content: '';
@@ -459,67 +282,67 @@
 }
 @keyframes textShadow {
   0% {
-    text-shadow: 0.4389924193300864px 0 1px rgba(0,30,255,0.5), -0.4389924193300864px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.4389924193300864px 0 1px rgba(112, 115, 137, 0.5), -0.4389924193300864px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   5% {
-    text-shadow: 2.7928974010788217px 0 1px rgba(0,30,255,0.5), -2.7928974010788217px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.7928974010788217px 0 1px rgba(112, 115, 137, 0.5), -2.7928974010788217px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   10% {
-    text-shadow: 0.02956275843481219px 0 1px rgba(0,30,255,0.5), -0.02956275843481219px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.02956275843481219px 0 1px rgba(112, 115, 137, 0.5), -0.02956275843481219px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   15% {
-    text-shadow: 0.40218538552878136px 0 1px rgba(0,30,255,0.5), -0.40218538552878136px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.40218538552878136px 0 1px rgba(112, 115, 137, 0.5), -0.40218538552878136px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   20% {
-    text-shadow: 3.4794037899852017px 0 1px rgba(0,30,255,0.5), -3.4794037899852017px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 3.4794037899852017px 0 1px rgba(112, 115, 137, 0.5), -3.4794037899852017px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   25% {
-    text-shadow: 1.6125630401149584px 0 1px rgba(0,30,255,0.5), -1.6125630401149584px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 1.6125630401149584px 0 1px rgba(112, 115, 137, 0.5), -1.6125630401149584px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   30% {
-    text-shadow: 0.7015590085143956px 0 1px rgba(0,30,255,0.5), -0.7015590085143956px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.7015590085143956px 0 1px rgba(112, 115, 137, 0.5), -0.7015590085143956px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   35% {
-    text-shadow: 3.896914047650351px 0 1px rgba(0,30,255,0.5), -3.896914047650351px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 3.896914047650351px 0 1px rgba(112, 115, 137, 0.5), -3.896914047650351px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   40% {
-    text-shadow: 3.870905614848819px 0 1px rgba(0,30,255,0.5), -3.870905614848819px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 3.870905614848819px 0 1px rgba(112, 115, 137, 0.5), -3.870905614848819px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   45% {
-    text-shadow: 2.231056963361899px 0 1px rgba(0,30,255,0.5), -2.231056963361899px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.231056963361899px 0 1px rgba(112, 115, 137, 0.5), -2.231056963361899px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   50% {
-    text-shadow: 0.08084290417898504px 0 1px rgba(0,30,255,0.5), -0.08084290417898504px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.08084290417898504px 0 1px rgba(112, 115, 137, 0.5), -0.08084290417898504px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   55% {
-    text-shadow: 2.3758461067427543px 0 1px rgba(0,30,255,0.5), -2.3758461067427543px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.3758461067427543px 0 1px rgba(112, 115, 137, 0.5), -2.3758461067427543px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   60% {
-    text-shadow: 2.202193051050636px 0 1px rgba(0,30,255,0.5), -2.202193051050636px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.202193051050636px 0 1px rgba(112, 115, 137, 0.5), -2.202193051050636px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   65% {
-    text-shadow: 2.8638780614874975px 0 1px rgba(0,30,255,0.5), -2.8638780614874975px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.8638780614874975px 0 1px rgba(112, 115, 137, 0.5), -2.8638780614874975px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   70% {
-    text-shadow: 0.48874025155497314px 0 1px rgba(0,30,255,0.5), -0.48874025155497314px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.48874025155497314px 0 1px rgba(112, 115, 137, 0.5), -0.48874025155497314px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   75% {
-    text-shadow: 1.8948491305757957px 0 1px rgba(0,30,255,0.5), -1.8948491305757957px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 1.8948491305757957px 0 1px rgba(112, 115, 137, 0.5), -1.8948491305757957px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   80% {
-    text-shadow: 0.0833037308038857px 0 1px rgba(0,30,255,0.5), -0.0833037308038857px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.0833037308038857px 0 1px rgba(112, 115, 137, 0.5), -0.0833037308038857px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   85% {
-    text-shadow: 0.09769827255241735px 0 1px rgba(0,30,255,0.5), -0.09769827255241735px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.09769827255241735px 0 1px rgba(112, 115, 137, 0.5), -0.09769827255241735px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   90% {
-    text-shadow: 3.443339761481782px 0 1px rgba(0,30,255,0.5), -3.443339761481782px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 3.443339761481782px 0 1px rgba(112, 115, 137, 0.5), -3.443339761481782px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   95% {
-    text-shadow: 2.1841838852799786px 0 1px rgba(0,30,255,0.5), -2.1841838852799786px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.1841838852799786px 0 1px rgba(112, 115, 137, 0.5), -2.1841838852799786px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
   100% {
-    text-shadow: 2.6208764473832513px 0 1px rgba(0,30,255,0.5), -2.6208764473832513px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.6208764473832513px 0 1px rgba(112, 115, 137, 0.5), -2.6208764473832513px 0 1px rgba(37, 34, 35, 0.3), 0 0 3px;
   }
 }
 .crt::after {
@@ -576,7 +399,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 4;
-  animation: fadeInOut 4s ease-in-out forwards;
+  animation: fadeInOut 0.5s ease-in-out forwards;
 }
 
 .atari-logo img {
@@ -616,16 +439,6 @@
   z-index: 0;
 }
 
-.decoration-left {
-  left: 0;
-  clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
-}
-
-.decoration-right {
-  right: 0;
-  clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%);
-}
-
 #info-text {
   position: absolute;
   top: 50%;
@@ -633,6 +446,8 @@
   transform: translate(-50%, -50%);
   visibility: hidden;
   animation: showAfterLogo 0s 4s forwards;
+  z-index: 5;
+  width: 100%;
 }
 
 @keyframes showAfterLogo {
@@ -644,13 +459,52 @@
   }
 }
 
+/* Update these radio button styles */
+input[type="radio"] + label {
+    user-select: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: block;
+    color: white;
+    position: relative;
+    z-index: 5;
+}
+
+input[type="radio"]:checked + label, input[type="radio"] + label:hover  {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: black;
+}
+
+
+/* Make sure radio inputs are properly hidden but still accessible */
+input[type="radio"].hidden {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    z-index: 5;
+}
+
+.game-mode-btn {
+    user-select: none;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: white;
+    position: relative;
+    z-index: 5;
+    font-size: inherit;
+}
+
+.game-mode-btn:focus {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: black;
+}
+
   </style>
 </head>
 <body>
   <div class="page-container">
-    <div class="side-decoration">
-      <div class="triangle-left"></div>
-    </div>
     <div class="main-content">
       <div class='arcade-cabinet'>
         <div class='game-title'>
@@ -662,7 +516,17 @@
           <div class='screen-bezel crt'>
             <div class='screen-content'>
               <div id='score' class='text-xl text-center text-white my-4'>Score</div>
-              <div id='info-text' class='text-xl text-center text-white my-4'>Press start to play</div>
+              <div id='info-text' class='text-2xl text-center text-white '>
+              <div class="text-3xl font-bold">Choose game mode</div>
+              <div class="flex justify-center flex-col items-center gap-4 mt-6">
+                  <button id="single" class="game-mode-btn px-4  transition-colors duration-200 block min-w-[150px]">
+                      Single-player
+                  </button>
+                  <button id="multi" class="game-mode-btn px-4 py-2 transition-colors duration-200 block min-w-[150px]">
+                      Multi-player
+                  </button>
+              </div>
+            </div>
               <div class="atari-logo">
                 <img src="https://cdn.b3.fun/atari-logo.png" alt="Atari" />
               </div>
@@ -673,28 +537,8 @@
           </div>
         </div>
 
-        <div class='controls-panel'>
-          <button id="random" class='start-button flex items-center justify-center'>
-            <span class='text-white'></span>Start</span>
-          </button>
-        </div>
-
         <input class='hidden' type='text' id='user' placeholder='Player Name (Auto)' aria-label='Player' readonly>
-        
-        <div id='pause' class='hidden'>
-          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-pause-circle" viewBox="0 0 16 16">
-            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-            <path d="M5 6.25a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5zm3.5 0a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0v-3.5z"/>
-          </svg>
-          <svg hidden xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-play-circle hidden" viewBox="0 0 16 16">
-            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-            <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
-          </svg>
-        </div>
       </div>
-    </div>
-    <div class="side-decoration">
-      <div class="triangle-right"></div>
     </div>
   </div>
 

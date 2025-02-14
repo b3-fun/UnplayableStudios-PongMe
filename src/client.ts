@@ -25,8 +25,8 @@ const token = urlParams.get("token");
 
 const socket = io(window.location.href);
 const playerInput = <HTMLInputElement>document.getElementById("user")!;
-const scoreSpan = document.getElementById("score")!;
-const startBtn = document.getElementById("random")!;
+const scoreElement = document.getElementById("score")!;
+
 const canvas = document.querySelector("canvas")!;
 const context = canvas.getContext("2d")!;
 
@@ -64,9 +64,16 @@ class Player {
 
 let game: Game, player: Player;
 
+// Replace radio button constants with regular button elements
+const singlePlayerBtn = document.getElementById("single") as HTMLButtonElement;
+console.log("singlePlayerBtn :", singlePlayerBtn);
+const multiPlayerBtn = document.getElementById("multi") as HTMLButtonElement;
+console.log("multiPlayerBtn :", multiPlayerBtn);
+
 function disableInputs() {
   playerInput.setAttribute("disabled", "true");
-  startBtn.setAttribute("disabled", "true");
+  singlePlayerBtn.setAttribute("disabled", "true");
+  multiPlayerBtn.setAttribute("disabled", "true");
 }
 
 function showAlert(text: string) {
@@ -80,8 +87,14 @@ function showAlert(text: string) {
   infoText.classList.remove("hidden");
 }
 
-// Update the joinRandomGame emit to include the token
-startBtn.onclick = () => {
+// Replace radio change handlers with click handlers
+singlePlayerBtn.onclick = () => {
+  // TODO: Implement single player mode
+  console.log("Single player selected");
+};
+
+multiPlayerBtn.onclick = () => {
+  console.log("Multi player selected");
   showAlert("Waiting for player to join...");
 
   socket.emit(
@@ -91,16 +104,12 @@ startBtn.onclick = () => {
       token: token,
     },
     (error: string) => {
-      console.log("error :", error);
       if (error) {
         showAlert(error);
-      } else {
       }
     }
   );
   disableInputs();
-  // document.getElementById("score")!.style.visibility = "visible";
-  //document.getElementById("info-text")!.textContent = "Waiting for opponent...";
 };
 
 // handle socket events
@@ -126,7 +135,7 @@ startBtn.onclick = () => {
       }
 
       // Show initial player names
-      scoreSpan.textContent = formatGameScore();
+      scoreElement.textContent = formatGameScore();
 
       setInterval(() => {
         draw_canvas();
@@ -135,7 +144,11 @@ startBtn.onclick = () => {
   );
 
   socket.on("startGame", () => {
-    showAlert("");
+    scoreElement.style.visibility = "visible";
+    showAlert("Prepare to start!");
+    setTimeout(() => {
+      showAlert("");
+    }, 2000);
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "ArrowUp" || e.key === "ArrowDown") {
@@ -190,7 +203,7 @@ startBtn.onclick = () => {
   socket.on("scoreUpdate", (data: { s1: number; s2: number }) => {
     game.state.p1.score = data.s1;
     game.state.p2.score = data.s2;
-    scoreSpan.textContent = formatGameScore();
+    scoreElement.textContent = formatGameScore();
   });
 
   socket.on("winnerUpdate", (data: { winnerNumber: number }) => {
@@ -272,10 +285,11 @@ function draw_canvas() {
 
 // Update the formatGameScore function to always show first player (p2) on right
 function formatGameScore() {
+  console.log("format game score");
   if (!game) return "Waiting for players...";
 
   // Always show p2 (first player to join) on the right side
-  return `${game.state.p2.name} vs ${game.state.p1.name} (${game.state.p2.score} - ${game.state.p1.score})`;
+  return `${game.state.p2.name}      ${game.state.p2.score} : ${game.state.p1.score}      ${game.state.p1.name}`;
 }
 
 // Add this helper function at the top of the file
