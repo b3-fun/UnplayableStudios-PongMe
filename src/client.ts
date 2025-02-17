@@ -197,6 +197,50 @@ multiPlayerBtn.onclick = () => {
       showAlert("");
     }, 2000);
 
+    // Add touch controls for mobile
+    const touchArea = canvas.parentElement || canvas;
+
+    const handleTouch = (e: TouchEvent) => {
+      e.preventDefault(); // Prevent scrolling
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      const touchY = touch.clientY - rect.top;
+      const middleY = rect.height / 2;
+
+      // Create a dead zone of 30% in the middle
+      const deadZoneSize = rect.height * 0.3;
+      const upperThreshold = middleY - deadZoneSize / 2;
+      const lowerThreshold = middleY + deadZoneSize / 2;
+
+      // Only move if touch is outside the dead zone
+      if (touchY < upperThreshold) {
+        player.direction = 1; // Up
+      } else if (touchY > lowerThreshold) {
+        player.direction = -1; // Down
+      } else {
+        player.direction = 0; // No movement in dead zone
+      }
+
+      socket.emit("movePlayer", {
+        playerNumber: player.number,
+        direction: player.direction,
+        roomName: game.state.roomName,
+      });
+    };
+
+    touchArea.addEventListener("touchstart", handleTouch);
+    touchArea.addEventListener("touchmove", handleTouch);
+
+    touchArea.addEventListener("touchend", () => {
+      player.direction = 0;
+      socket.emit("movePlayer", {
+        playerNumber: player.number,
+        direction: player.direction,
+        roomName: game.state.roomName,
+      });
+    });
+
+    // Existing keyboard controls
     document.addEventListener("keydown", (e) => {
       if (e.key === "ArrowUp" || e.key === "ArrowDown") {
         switch (e.key) {

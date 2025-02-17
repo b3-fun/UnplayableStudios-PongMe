@@ -182,6 +182,11 @@
       z-index: 1;
       margin: 10px auto;
       /* box-shadow: inset 0 0 20px rgba(0,0,0,0.8); */
+      touch-action: none; /* Prevents browser handling of touch events */
+      -webkit-touch-callout: none; /* Prevents long-press menu on iOS */
+      -webkit-user-select: none; /* Prevents text selection on iOS */
+      user-select: none;
+
     }
     #score {
       color: white;
