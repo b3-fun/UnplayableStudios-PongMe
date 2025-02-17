@@ -72,6 +72,33 @@ export const collides = (ball: ballType, playerX: number, playerY: number) => {
   return false;
 };
 
+// Add this new function to handle AI paddle movement
+function moveAI(ball: ballType, aiPaddle: { x: number; y: number }) {
+  // Simple AI that follows the ball with some delay
+  const paddleCenter = aiPaddle.y + gameEnv.paddleHeight / 2;
+  const ballCenter = ball.y + gameEnv.ballRadius;
+  const difference = ballCenter - paddleCenter;
+
+  // Add some "reaction time" - only move if ball is moving towards AI
+  if (ball.vx > 0) {
+    // Move towards the ball with some maximum speed
+    const moveSpeed = 5;
+    if (Math.abs(difference) > moveSpeed) {
+      if (difference > 0) {
+        aiPaddle.y += moveSpeed;
+      } else {
+        aiPaddle.y -= moveSpeed;
+      }
+    }
+  }
+
+  // Keep paddle within bounds
+  if (aiPaddle.y < 0) aiPaddle.y = 0;
+  if (aiPaddle.y + gameEnv.paddleHeight > gameEnv.tableHeight) {
+    aiPaddle.y = gameEnv.tableHeight - gameEnv.paddleHeight;
+  }
+}
+
 // Updates game on every frame
 export const playGame = (io: Server, roomName: string, game: gameStateType) => {
   // Moves the ball (called on each frame)
@@ -278,6 +305,17 @@ export const playGame = (io: Server, roomName: string, game: gameStateType) => {
   // Game loop
   game.mainLoop = setInterval(() => {
     if (game.p1.paused || game.p2.paused) return;
+
+    // Move AI if this is single player mode
+    if (game.isSinglePlayer) {
+      moveAI(game.ball, game.p1);
+      // Emit AI paddle position
+      io.to(roomName).emit("locationUpdate", {
+        playerNumber: 1,
+        newLocation: { x: game.p1.x, y: game.p1.y },
+      });
+    }
+
     moveBall();
     collisionCheck();
     scoreCheck();

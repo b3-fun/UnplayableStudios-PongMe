@@ -117,6 +117,66 @@ export function handleClient(client: Socket, io: Server) {
     }
   }
 
+  function joinSinglePlayer(
+    data: { playerName: string; token?: string },
+    callback: (error?: string) => void
+  ) {
+    try {
+      // Create a new room for single player
+      const roomName = `single_${client.id}`;
+      client.join(roomName);
+
+      // Initialize game state with AI opponent
+      const game: gameStateType = {
+        p1: {
+          x: gameEnv.p1Location.x,
+          y: gameEnv.p1Location.y,
+          score: 0,
+          name: "AI",
+          paused: false,
+          token: "",
+        },
+        p2: {
+          x: gameEnv.p2Location.x,
+          y: gameEnv.p2Location.y,
+          score: 0,
+          name: data.playerName,
+          paused: false,
+          token: data.token || "",
+        },
+        ball: {
+          x: gameEnv.tableCenter.x - gameEnv.ballRadius,
+          y: gameEnv.tableCenter.y - gameEnv.ballRadius,
+          vx: gameParams.ballVelocity.x,
+          vy: gameParams.ballVelocity.y,
+          speed: gameParams.ballVelocity.v,
+        },
+        mainLoop: null,
+        isSinglePlayer: true,
+        roomName: roomName,
+      };
+
+      // Store game state
+      games.set(roomName, game);
+
+      // Send initial game data to player
+      client.emit("gameData", {
+        playerNumber: 2, // Player is always player 2 in single player
+        gameEnv: gameEnv,
+        gameState: game,
+        roomName: roomName,
+      });
+
+      // Start the game immediately
+      client.emit("startGame");
+
+      // Start game loop
+      playGame(io, roomName, game);
+    } catch (error: any) {
+      callback(error.message);
+    }
+  }
+
   function joinRoom(
     data: { playerName: string; roomName: string },
     callback: (error?: string) => void
@@ -211,6 +271,7 @@ export function handleClient(client: Socket, io: Server) {
     }
   }
 
+  client.on("joinSinglePlayer", joinSinglePlayer);
   client.on("joinRandomGame", joinRandomGame);
   client.on("joinRoom", joinRoom);
   client.on("movePlayer", movePlayer);

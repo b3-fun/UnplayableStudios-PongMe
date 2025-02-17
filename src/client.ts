@@ -86,10 +86,24 @@ function showAlert(text: string) {
 
 // Replace radio change handlers with click handlers
 singlePlayerBtn.onclick = () => {
-  // TODO: Implement single player mode
+  showAlert("Starting single player game...");
   backBtn.classList.remove("hidden");
   multiPlayerBtn.classList.add("hidden");
   singlePlayerBtn.classList.add("hidden");
+
+  socket.emit(
+    "joinSinglePlayer",
+    {
+      playerName: playerInput.value,
+      token: token,
+    },
+    (error: string) => {
+      if (error) {
+        showAlert(error);
+      }
+    }
+  );
+  disableInputs();
 };
 
 backBtn.onclick = () => {

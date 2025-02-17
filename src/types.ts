@@ -18,7 +18,7 @@ export type gameEnvType = {
     x: number;
     y: number;
   };
-}
+};
 
 export type gameStateType = {
   mainLoop: NodeJS.Timer | null;
@@ -26,6 +26,7 @@ export type gameStateType = {
   p1: playerType;
   p2: playerType;
   roomName?: string;
+  isSinglePlayer?: boolean;
 };
 
 export type ballType = {
