@@ -27,6 +27,7 @@ export type gameStateType = {
   p2: playerType;
   roomName?: string;
   isSinglePlayer?: boolean;
+  aiDifficulty?: "easy" | "hard" | "hardcore";
 };
 
 export type ballType = {

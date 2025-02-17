@@ -72,8 +72,28 @@ export const collides = (ball: ballType, playerX: number, playerY: number) => {
   return false;
 };
 
-// Add this new function to handle AI paddle movement
-function moveAI(ball: ballType, aiPaddle: { x: number; y: number }) {
+// Add AI difficulty levels
+type AIDifficulty = "easy" | "hard" | "hardcore";
+
+const DEFAULT_AI_DIFFICULTY: AIDifficulty = "hardcore";
+
+function moveAI(
+  ball: ballType,
+  aiPaddle: { x: number; y: number },
+  difficulty: AIDifficulty = DEFAULT_AI_DIFFICULTY
+) {
+  switch (difficulty) {
+    case "easy":
+      moveAIEasy(ball, aiPaddle);
+      break;
+    case "hard":
+      moveAIHard(ball, aiPaddle);
+      break;
+  }
+}
+
+// Easy AI just follows the ball with delay
+function moveAIEasy(ball: ballType, aiPaddle: { x: number; y: number }) {
   // Simple AI that follows the ball with some delay
   const paddleCenter = aiPaddle.y + gameEnv.paddleHeight / 2;
   const ballCenter = ball.y + gameEnv.ballRadius;
@@ -93,6 +113,65 @@ function moveAI(ball: ballType, aiPaddle: { x: number; y: number }) {
   }
 
   // Keep paddle within bounds
+  if (aiPaddle.y < 0) aiPaddle.y = 0;
+  if (aiPaddle.y + gameEnv.paddleHeight > gameEnv.tableHeight) {
+    aiPaddle.y = gameEnv.tableHeight - gameEnv.paddleHeight;
+  }
+}
+
+// Hard AI predicts ball trajectory and returns to center
+function moveAIHard(ball: ballType, aiPaddle: { x: number; y: number }) {
+  if (ball.vx > 0 || ball.x > gameEnv.tableWidth * 0.75) {
+    // Predict where ball will intersect with AI paddle's x position
+    const timeToIntercept = (aiPaddle.x - ball.x) / ball.vx;
+    const interceptY = ball.y + ball.vy * timeToIntercept;
+
+    // Account for bounces
+    let targetY = interceptY;
+    const tableHeight = gameEnv.tableHeight;
+
+    if (interceptY < 0) {
+      // Ball will bounce off top
+      targetY = -interceptY;
+    } else if (interceptY > tableHeight) {
+      // Ball will bounce off bottom
+      targetY = tableHeight - (interceptY - tableHeight);
+    }
+
+    // Aim for the predicted position
+    const paddleCenter = aiPaddle.y + gameEnv.paddleHeight / 2;
+    const difference = targetY - paddleCenter;
+
+    // Faster movement speed
+    const moveSpeed = 8;
+
+    if (Math.abs(difference) > moveSpeed) {
+      if (difference > 0) {
+        aiPaddle.y += moveSpeed;
+      } else {
+        aiPaddle.y -= moveSpeed;
+      }
+    }
+  } else {
+    // After hitting the ball, move to a "ready position" around the center
+    const centerY = gameEnv.tableHeight / 2 - gameEnv.paddleHeight / 2;
+    const offset = Math.sin(Date.now() / 500) * 50;
+    const targetY = centerY + offset;
+
+    const paddleCenter = aiPaddle.y + gameEnv.paddleHeight / 2;
+    const difference = targetY - paddleCenter;
+
+    const moveSpeed = 4;
+    if (Math.abs(difference) > moveSpeed) {
+      if (difference > 0) {
+        aiPaddle.y += moveSpeed;
+      } else {
+        aiPaddle.y -= moveSpeed;
+      }
+    }
+  }
+
+  // Add bounds check
   if (aiPaddle.y < 0) aiPaddle.y = 0;
   if (aiPaddle.y + gameEnv.paddleHeight > gameEnv.tableHeight) {
     aiPaddle.y = gameEnv.tableHeight - gameEnv.paddleHeight;
@@ -308,7 +387,7 @@ export const playGame = (io: Server, roomName: string, game: gameStateType) => {
 
     // Move AI if this is single player mode
     if (game.isSinglePlayer) {
-      moveAI(game.ball, game.p1);
+      moveAI(game.ball, game.p1, game.aiDifficulty || DEFAULT_AI_DIFFICULTY);
       // Emit AI paddle position
       io.to(roomName).emit("locationUpdate", {
         playerNumber: 1,
