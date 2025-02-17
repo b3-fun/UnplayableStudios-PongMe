@@ -118,7 +118,7 @@ export function handleClient(client: Socket, io: Server) {
   }
 
   function joinSinglePlayer(
-    data: { playerName: string; token?: string },
+    data: { playerName: string; token?: string; difficulty?: "easy" | "hard" },
     callback: (error?: string) => void
   ) {
     try {
@@ -127,12 +127,14 @@ export function handleClient(client: Socket, io: Server) {
       client.join(roomName);
 
       // Initialize game state with AI opponent
+      const randomDirection = Math.random() < 0.5 ? -1 : 1;
+
       const game: gameStateType = {
         p1: {
           x: gameEnv.p1Location.x,
           y: gameEnv.p1Location.y,
           score: 0,
-          name: "AI",
+          name: data.difficulty === "easy" ? "Lil Pong" : "Mr. Pong",
           paused: false,
           token: "",
         },
@@ -147,13 +149,14 @@ export function handleClient(client: Socket, io: Server) {
         ball: {
           x: gameEnv.tableCenter.x - gameEnv.ballRadius,
           y: gameEnv.tableCenter.y - gameEnv.ballRadius,
-          vx: gameParams.ballVelocity.x,
+          vx: gameParams.ballVelocity.x * randomDirection,
           vy: gameParams.ballVelocity.y,
           speed: gameParams.ballVelocity.v,
         },
         mainLoop: null,
         isSinglePlayer: true,
         roomName: roomName,
+        aiDifficulty: data.difficulty,
       };
 
       // Store game state
@@ -171,7 +174,9 @@ export function handleClient(client: Socket, io: Server) {
       client.emit("startGame");
 
       // Start game loop
-      playGame(io, roomName, game);
+      setTimeout(() => {
+        playGame(io, roomName, game);
+      }, gameParams.roundBreak);
     } catch (error: any) {
       callback(error.message);
     }

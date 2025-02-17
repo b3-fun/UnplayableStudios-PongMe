@@ -73,9 +73,9 @@ export const collides = (ball: ballType, playerX: number, playerY: number) => {
 };
 
 // Add AI difficulty levels
-type AIDifficulty = "easy" | "hard" | "hardcore";
+type AIDifficulty = "easy" | "hard";
 
-const DEFAULT_AI_DIFFICULTY: AIDifficulty = "hardcore";
+const DEFAULT_AI_DIFFICULTY: AIDifficulty = "hard";
 
 function moveAI(
   ball: ballType,
@@ -205,13 +205,16 @@ export const playGame = (io: Server, roomName: string, game: gameStateType) => {
 
   // Prepares the table for a new round.
   function resetPositions() {
+    const randomDirection = Math.random() < 0.5 ? -1 : 1;
+
     game.ball.x = gameEnv.tableCenter.x - gameEnv.ballRadius;
     game.ball.y = gameEnv.tableCenter.y - gameEnv.ballRadius;
-    game.ball.vx = gameParams.ballVelocity.x;
+    game.ball.vx = gameParams.ballVelocity.x * randomDirection; // Randomize direction after each point
     game.ball.vy = gameParams.ballVelocity.y;
     game.ball.speed = gameParams.ballVelocity.v;
     game.p1.y = gameEnv.p1Location.y;
     game.p2.y = gameEnv.p2Location.y;
+
     io.to(roomName).emit("locationUpdate", {
       playerNumber: 0,
       newLocation: { x: game.ball.x, y: game.ball.y },

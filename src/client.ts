@@ -67,11 +67,16 @@ let game: Game, player: Player;
 const singlePlayerBtn = document.getElementById("single") as HTMLButtonElement;
 const multiPlayerBtn = document.getElementById("multi") as HTMLButtonElement;
 const backBtn = document.getElementById("back") as HTMLButtonElement;
+const easyBtn = document.getElementById("easy") as HTMLButtonElement;
+const hardBtn = document.getElementById("hard") as HTMLButtonElement;
+const exitBtn = document.getElementById("exit") as HTMLButtonElement;
 
 function disableInputs() {
   playerInput.setAttribute("disabled", "true");
   singlePlayerBtn.setAttribute("disabled", "true");
   multiPlayerBtn.setAttribute("disabled", "true");
+  easyBtn.setAttribute("disabled", "true");
+  hardBtn.setAttribute("disabled", "true");
 }
 const infoElement = document.getElementById("info")!;
 const infoText = infoElement.querySelector(".info-text")!;
@@ -84,18 +89,32 @@ function showAlert(text: string) {
   infoText.classList.remove("hidden");
 }
 
-// Replace radio change handlers with click handlers
-singlePlayerBtn.onclick = () => {
-  showAlert("Starting single player game...");
-  backBtn.classList.remove("hidden");
+function showGameDifficultyMenu() {
+  showAlert("Choose game difficulty");
   multiPlayerBtn.classList.add("hidden");
   singlePlayerBtn.classList.add("hidden");
+  backBtn.classList.remove("hidden");
+
+  easyBtn.classList.remove("hidden");
+  hardBtn.classList.remove("hidden");
+}
+// Replace radio change handlers with click handlers
+singlePlayerBtn.onclick = () => {
+  showGameDifficultyMenu();
+};
+
+function startSinglePlayerGame(difficulty: string) {
+  easyBtn.classList.add("hidden");
+  hardBtn.classList.add("hidden");
+  backBtn.classList.add("hidden");
+  exitBtn.classList.remove("hidden");
 
   socket.emit(
     "joinSinglePlayer",
     {
       playerName: playerInput.value,
       token: token,
+      difficulty: difficulty,
     },
     (error: string) => {
       if (error) {
@@ -104,13 +123,22 @@ singlePlayerBtn.onclick = () => {
     }
   );
   disableInputs();
+}
+
+easyBtn.onclick = () => {
+  startSinglePlayerGame("easy");
+};
+
+hardBtn.onclick = () => {
+  startSinglePlayerGame("hard");
 };
 
 backBtn.onclick = () => {
   window.location.href = getRedirectUrl();
-  backBtn.classList.add("hidden");
-  multiPlayerBtn.classList.remove("hidden");
-  singlePlayerBtn.classList.remove("hidden");
+};
+
+exitBtn.onclick = () => {
+  window.location.href = getRedirectUrl();
 };
 
 multiPlayerBtn.onclick = () => {
@@ -164,7 +192,6 @@ multiPlayerBtn.onclick = () => {
 
   socket.on("startGame", () => {
     scoreElement.style.visibility = "visible";
-    backBtn.classList.add("hidden");
     showAlert("Prepare to start!");
     setTimeout(() => {
       showAlert("");
@@ -232,7 +259,9 @@ multiPlayerBtn.onclick = () => {
     } else {
       showAlert("You Lost!");
     }
-    window.location.href = getRedirectUrl();
+    setTimeout(() => {
+      window.location.href = getRedirectUrl();
+    }, 3000);
   });
 
   socket.on("interrupt", (data: { code: number }) => {

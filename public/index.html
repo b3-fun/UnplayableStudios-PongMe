@@ -491,7 +491,6 @@ input[type="radio"].hidden {
     background: transparent;
     border: none;
     color: white;
-    position: relative;
     z-index: 5;
     font-size: inherit;
 }
@@ -501,7 +500,12 @@ input[type="radio"].hidden {
     color: black;
 }
 
-  </style>
+#exit {
+  top: 52px;
+  left: 40px;
+}
+
+</style>
 </head>
 <body>
   <div class="page-container">
@@ -516,6 +520,9 @@ input[type="radio"].hidden {
           <div class='screen-bezel crt'>
             <div class='screen-content'>
               <div id='score' class='text-xl text-center text-white my-4'>Score</div>
+              <button id="exit" class="absolute game-mode-btn px-2  top-5 left-5  transition-colors duration-200 block min-w-[50px] hidden">
+                  Exit
+              </button>
               <div id='info' class='text-2xl text-center text-white '>
               <div class="info-text text-3xl font-bold">Choose game mode</div>
        
@@ -526,6 +533,12 @@ input[type="radio"].hidden {
                   <button id="multi" class="game-mode-btn px-4 py-2 transition-colors duration-200 block min-w-[150px]">
                       Multi-player
                   </button>
+                  <button id="easy" class="game-mode-btn px-4  transition-colors duration-200 block min-w-[150px] hidden">
+                    Easy
+                </button>
+                <button id="hard" class="game-mode-btn px-4 py-2 transition-colors duration-200 block min-w-[150px] hidden">
+                    Hard
+                </button>
                   <button id="back" class="game-mode-btn px-4 py-2 transition-colors duration-200 block min-w-[150px] hidden">
                     Back
                 </button>
