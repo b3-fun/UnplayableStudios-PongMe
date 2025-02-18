@@ -36,7 +36,7 @@
 
     .arcade-cabinet {
       background-color: #fef164;
-      margin: 20px auto;
+      margin: 0px auto;
       position: relative;
       z-index: 1;
 
@@ -48,6 +48,7 @@
       position: relative;
       margin: 0 auto 20px;
       max-width: 850px;
+      width: 60%;
       padding-top: 20px;
       transform: perspective(100px) rotateX(-1deg);
       transform-origin: center bottom;
@@ -161,7 +162,7 @@
     }
     .game-title {
       text-align: center;
-      margin-bottom: 175px;
+      margin-bottom: 160px;
 
       @media (max-width: 932px) {
         display: block;
@@ -542,9 +543,112 @@ input[type="radio"].hidden {
   left: 7%;
 }
 
+#orientation-warning {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: black;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    text-align: center;
+    padding: 20px;
+    font-family: 'Jersey 10', sans-serif;
+}
+
+/* Add screen bezel effect to orientation warning */
+.orientation-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #111;
+}
+
+#orientation-warning h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: textShadow 1.6s infinite;
+}
+
+#orientation-warning p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+#orientation-warning .rotate-icon {
+    font-size: 4em;
+    margin-top: 20px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+}
+
+@media only screen and (orientation: portrait) and (max-width: 768px) {
+    .page-container {
+        display: none;
+    }
+    
+    #orientation-warning {
+        display: flex;
+    }
+
+    #orientation-warning::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.25) 50%
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 0, 0, 0.06),
+            rgba(0, 255, 0, 0.02),
+            rgba(0, 0, 255, 0.06)
+        );
+        background-size: 100% 2px, 3px 100%;
+        pointer-events: none;
+        opacity: 0.15;
+        z-index: -1;
+    }
+}
+
 </style>
 </head>
 <body>
+  <div id="orientation-warning" class="crt">
+    <div>
+        <h2>Rotate Device</h2>
+        <p>For the ultimate PONG experience,<br>please switch to landscape mode</p>
+        <div class="rotate-icon">↶📱</div>
+    </div>
+  </div>
   <div class="page-container">
     <div class="main-content">
       <div class='arcade-cabinet'>
