@@ -6,12 +6,12 @@ export const games = new Map();
 // Properties sent to client for visualizing game.
 export const gameEnv: gameEnvType = {
   frameRate: 30,
-  tableHeight: 500,
-  tableWidth: 860,
+  tableHeight: 600,
+  tableWidth: 1200,
   paddleHeight: 150,
   paddleWidth: 20,
   ballRadius: 10,
-  margin: 20,
+  margin: 80,
   get tableCenter() {
     return {
       x: this.tableWidth / 2,

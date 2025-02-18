@@ -102,7 +102,7 @@ function moveAIEasy(ball: ballType, aiPaddle: { x: number; y: number }) {
   // Add some "reaction time" - only move if ball is moving towards AI
   if (ball.vx > 0) {
     // Move towards the ball with some maximum speed
-    const moveSpeed = 5;
+    const moveSpeed = 7;
     if (Math.abs(difference) > moveSpeed) {
       if (difference > 0) {
         aiPaddle.y += moveSpeed;

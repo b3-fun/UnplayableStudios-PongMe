@@ -141,6 +141,12 @@ exitBtn.onclick = () => {
   window.location.href = getRedirectUrl();
 };
 
+// Add touch handler for exit button
+exitBtn.addEventListener("touchend", (e) => {
+  e.preventDefault(); // Prevent any default touch behavior
+  window.location.href = getRedirectUrl();
+});
+
 multiPlayerBtn.onclick = () => {
   backBtn.classList.remove("hidden");
   multiPlayerBtn.classList.add("hidden");
@@ -328,11 +334,25 @@ multiPlayerBtn.onclick = () => {
 
 function draw_canvas() {
   if (!game) return;
-  canvas.width = game.env.tableWidth;
-  canvas.height = game.env.tableHeight;
-  canvas.style.width = canvas.width / 2 + "px";
-  canvas.style.height = canvas.height / 2 + "px";
-  //canvas.style.backgroundColor = "#3f526d";
+
+  // Set internal game dimensions
+  // canvas.width = game.env.tableWidth;
+  // canvas.height = game.env.tableHeight;
+
+  // // Calculate scaling based on device width
+  // const maxWidth = Math.min(window.innerWidth * 0.95, game.env.tableWidth);
+  // console.log("maxWidth :", maxWidth);
+  // const maxHeight = Math.min(window.innerHeight * 0.95, game.env.tableHeight);
+  // console.log("maxHeight :", maxHeight);
+  // const scaleWidth = maxWidth / game.env.tableWidth;
+  // const scaleHeight = maxHeight / game.env.tableHeight;
+
+  // // Apply responsive scaling while maintaining aspect ratio
+  // canvas.style.width = `${game.env.tableWidth * scaleWidth}px`;
+  // canvas.style.height = `${game.env.tableHeight * scaleHeight}px`;
+
+  // // Scale the canvas context to match display size
+  // context.scale(1, 1); // Reset any previous scaling
 
   if (player.direction) {
     socket.emit("movePlayer", {
@@ -395,3 +415,35 @@ function getRedirectUrl() {
   }
   return "/";
 }
+
+function setupResponsiveCanvas() {
+  // Detect if we're on mobile
+  const isMobile = window.innerHeight < 500;
+  console.log("isMobile :", isMobile);
+
+  // Use available width
+  const maxWidth = Math.min(window.innerWidth * 0.95, 1200);
+  const maxHeight = Math.min(window.innerHeight * 0.95, 600);
+
+  // Calculate height - on mobile, divide by 4 instead of 2
+  let targetHeight;
+  if (isMobile) {
+    targetHeight = maxHeight * (600 / 1200); // This will make it 1/4 of original height ratio
+  } else {
+    targetHeight = maxHeight * (600 / 1200); // For desktop, use the full maxHeight
+  }
+  console.log("targetHeight :", targetHeight);
+
+  // Apply dimensions
+  canvas.style.width = `${maxWidth}px`;
+  canvas.style.height = `${targetHeight}px`;
+
+  // Keep internal canvas dimensions constant
+  canvas.width = 1200;
+  canvas.height = 600;
+}
+
+// Add window resize listener
+window.addEventListener("resize", setupResponsiveCanvas);
+// Initial setup
+setupResponsiveCanvas();

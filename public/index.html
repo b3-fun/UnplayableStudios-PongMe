@@ -2,6 +2,7 @@
 <html lang='en'>
 <head>
   <meta charset='UTF-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>PONG</title>
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,8 +14,12 @@
       background-color: #fef164;
       margin: 0;
       padding: 0;  /* Remove padding */
-      min-height: 100vh;
+      /* min-height: 100vh; */
       letter-spacing: 0.05em;
+      overflow-x: hidden;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
     }
 
     .page-container {
@@ -23,10 +28,10 @@
           /* border-top: 30px solid black; */
     }
 
-
     .main-content {
       width: 100%;  /* Adjust as needed */
       padding: 20px;
+
     }
 
     .arcade-cabinet {
@@ -34,15 +39,27 @@
       margin: 20px auto;
       position: relative;
       z-index: 1;
+
+      @media (max-width: 932px) {
+        margin: 0px auto;
+      }
     }
     .screen-container {
       position: relative;
-      margin: 0 auto 70px;
-      max-width: 666px;
+      margin: 0 auto 20px;
+      max-width: 850px;
       padding-top: 20px;
-      transform: perspective(1000px) rotateX(-20deg);
+      transform: perspective(100px) rotateX(-1deg);
       transform-origin: center bottom;
       font-family: 'Jersey 10', sans-serif;
+
+
+      @media (max-width: 932px) {
+        padding-top: 0px;
+        max-width: 60%;
+
+
+      }
     }
     .screen-background {
       background-color: #000;
@@ -58,8 +75,8 @@
     .screen-bezel {
       background-color: #000;
       position: relative;
-      padding: 30px;
-      transform: perspective(1000px) rotateX(20deg);
+      padding: 62px 35px;
+      transform: perspective(100px) rotateX(1deg);
       transform-origin: center center;
       border-radius: 30px 30px 80px 80px;
       box-shadow: 
@@ -102,6 +119,12 @@
         0 0 20px rgba(0,0,0,0.5);
       margin: 10px 10 20px 10px;
       height: 450px;
+      max-width: 800px;
+
+      @media (max-width: 932px) {
+        height: 300px;
+        /* height: 100%; */
+      }
     }
 
     @keyframes scanline {
@@ -138,29 +161,36 @@
     }
     .game-title {
       text-align: center;
-      margin-bottom: 200px;
+      margin-bottom: 175px;
+
+      @media (max-width: 932px) {
+        display: block;
+        position: absolute;
+        top: 33%;
+        left: -45px;
+        transform: rotate(-90deg);
+        z-index: 1;
+      }
+    }
+    .atari-logo-mobile{
+      display: none;
+
+      @media (max-width: 932px) {
+        width: 236px;
+        height: auto;
+        display: block;
+        position: absolute;
+        top: 16%;
+        right: -66px;
+        transform: rotate(90deg);
+        z-index: 1;
+      }
     }
     .game-title img {
       width: 200px;
       height: auto;
       display: block;
       margin: 0 auto 20px;
-    }
-    .controls-panel {
-      background: #e6e6e6;
-      padding: 40px;
-      border-radius: 4px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      transform: perspective(1000px) rotateX(32deg);
-      transform-origin: center bottom;
-      box-shadow: 
-        inset 0 1px 2px rgba(255,255,255,0.2),
-        inset 0 -1px 2px rgba(0,0,0,0.2),
-        0 3px 10px rgba(0,0,0,0.2);
-      position: relative;
-      overflow: visible;
     }
 
     .hidden {
@@ -175,8 +205,8 @@
 
     canvas {
       /* background-color: #000; */
-      width: calc(100% - 20px);
-      height: 300px;
+      width: calc(100% - 40px);
+      height: calc(100% - 20px);
       display: block;
       position: relative;
       z-index: 1;
@@ -186,6 +216,8 @@
       -webkit-touch-callout: none; /* Prevents long-press menu on iOS */
       -webkit-user-select: none; /* Prevents text selection on iOS */
       user-select: none;
+      display: block;
+      max-width: 100%;
 
     }
     #score {
@@ -193,7 +225,7 @@
       position: relative;
       z-index: 3;
       visibility: hidden;
-      margin-top: 50px;
+      margin-top: 20px;
       font-size: 20px;
       white-space: break-spaces; 
 
@@ -506,8 +538,8 @@ input[type="radio"].hidden {
 }
 
 #exit {
-  top: 52px;
-  left: 40px;
+  top: 20px;
+  left: 7%;
 }
 
 </style>
@@ -517,7 +549,10 @@ input[type="radio"].hidden {
     <div class="main-content">
       <div class='arcade-cabinet'>
         <div class='game-title'>
-          <img src="https://cdn.b3.fun/pong-logo.png" alt="PONG" />
+          <img src="https://cdn.b3.fun/pong-logo.png" alt="PONG logo" />
+        </div>
+        <div class="atari-logo-mobile">
+          <img src="https://cdn.b3.fun/atari-logo-inline.png" alt="Atari logo" />
         </div>
         
         <div class='screen-container'>
