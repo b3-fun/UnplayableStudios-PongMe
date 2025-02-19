@@ -74,6 +74,7 @@
 
     }
     .screen-bezel {
+      margin-top: -40px;
       background-color: #000;
       position: relative;
       padding: 62px 35px;
@@ -84,6 +85,9 @@
         inset 0 2px 40px rgba(255,255,255,0.05),
         inset 0 -2px 40px rgba(0,0,0,0.9);
       z-index: 2;
+      @media (max-width: 932px) {
+        margin-top: 20px;
+      }
     }
     .screen-bezel::after {
       content: '';
