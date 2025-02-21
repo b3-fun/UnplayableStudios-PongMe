@@ -198,6 +198,9 @@ multiPlayerBtn.onclick = () => {
 
   socket.on("startGame", () => {
     scoreElement.style.visibility = "visible";
+    backBtn.classList.add("hidden");
+    exitBtn.classList.remove("hidden");
+
     showAlert("Prepare to start!");
     setTimeout(() => {
       showAlert("");
