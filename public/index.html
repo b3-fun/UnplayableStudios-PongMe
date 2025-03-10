@@ -30,11 +30,12 @@
 
     .main-content {
       width: 100%;  /* Adjust as needed */
-      padding: 20px;
+       padding: 10px; 
 
     }
 
     .arcade-cabinet {
+      height: 100%;
       background-color: #fef164;
       margin: 0px auto;
       position: relative;
@@ -42,9 +43,13 @@
 
       @media (max-width: 932px) {
         margin: 0px auto;
+        height: unset;
       }
     }
     .screen-container {
+      height: 74%;
+      min-height: 478px;
+
       position: relative;
       margin: 0 auto 20px;
       max-width: 850px;
@@ -59,10 +64,14 @@
         padding-top: 0px;
         max-width: 60%;
         margin-top: -25px;
+      min-height: auto;
+
 
       }
     }
     .screen-background {
+      height: 100%;
+
       background-color: #000;
       position: absolute;
       top: -10px;
@@ -74,6 +83,8 @@
 
     }
     .screen-bezel {
+      height: 100%;
+
       margin-top: -40px;
       background-color: #000;
       position: relative;
@@ -113,6 +124,8 @@
       z-index: 1;
     }
     .screen-content {
+      height: 100%;
+
       position: relative;
       background: #111;
       border-radius: 20px;
@@ -123,7 +136,6 @@
         inset 0 -2px 30px rgba(0,0,0,0.8),
         0 0 20px rgba(0,0,0,0.5);
       margin: 10px 10 20px 10px;
-      height: 450px;
       max-width: 800px;
 
       @media (max-width: 932px) {
@@ -166,7 +178,7 @@
     }
     .game-title {
       text-align: center;
-      margin-bottom: 160px;
+      margin-bottom: 130px;
 
       @media (max-width: 932px) {
         display: block;
@@ -175,6 +187,10 @@
         left: -45px;
         transform: rotate(-90deg);
         z-index: 1;
+      }
+
+      @media (min-width: 1600px) {
+        margin-bottom: 160px;
       }
     }
     .atari-logo-mobile{
