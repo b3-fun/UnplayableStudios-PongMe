@@ -62,12 +62,18 @@
 
       @media (max-width: 932px) {
         padding-top: 0px;
-        max-width: 60%;
+        max-width: 74%;
+        width: 74%;
         margin-top: -25px;
-      min-height: auto;
-
-
+        min-height: auto;
       }
+
+      @media only screen and (orientation: landscape) and (max-width: 932px) and (hover: none) and (pointer: coarse) {
+        padding-top: 0px;
+        max-width: 60%;
+        margin: 0 auto;
+        min-height: auto;
+      } 
     }
     .screen-background {
       height: 100%;
@@ -139,8 +145,8 @@
       max-width: 800px;
 
       @media (max-width: 932px) {
-        height: 300px;
-        /* height: 100%; */
+        /* height: 300px; */
+        height: 100%;
       }
     }
 
@@ -180,7 +186,7 @@
       text-align: center;
       margin-bottom: 130px;
 
-      @media (max-width: 932px) {
+      @media only screen and (orientation: landscape) and (max-width: 932px) and (hover: none) and (pointer: coarse){
         display: block;
         position: absolute;
         top: 33%;
@@ -196,7 +202,7 @@
     .atari-logo-mobile{
       display: none;
 
-      @media (max-width: 932px) {
+      @media only screen and (orientation: landscape) and (max-width: 932px) and (hover: none) and (pointer: coarse) {
         width: 236px;
         height: auto;
         display: block;
@@ -205,6 +211,7 @@
         right: -66px;
         transform: rotate(90deg);
         z-index: 1;
+        
       }
     }
     .game-title img {
@@ -212,6 +219,13 @@
       height: auto;
       display: block;
       margin: 0 auto 20px;
+        @media screen and (min-width: 932px) {
+        background-color: #fef164;
+        position: relative;
+        z-index: 123;
+        padding: 1px;
+        border-radius: 2px;
+      }
     }
 
     .hidden {
@@ -439,7 +453,7 @@
   top: -15px;
   left: -35px;
   right: -35px;
-  bottom: -15px;
+  bottom: 0px;
   background-image: url(https://cdn.b3.fun/computer-overlay.gif);
   background-size: 100% 100%;
   background-position: center;
@@ -626,7 +640,7 @@ input[type="radio"].hidden {
     }
 }
 
-@media only screen and (orientation: portrait) and (max-width: 768px) {
+@media only screen and (orientation: portrait) and (max-width: 768px) and (hover: none) and (pointer: coarse)  {
     .page-container {
         display: none;
     }
