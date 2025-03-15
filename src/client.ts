@@ -240,13 +240,26 @@ multiPlayerBtn.onclick = () => {
     touchArea.addEventListener("touchstart", handleTouch);
     touchArea.addEventListener("touchmove", handleTouch);
 
+    // Throttle movement updates to reduce network traffic
+    let lastEmitTime = 0;
+    const EMIT_THROTTLE = 50; // ms between emits
+
+    function throttledEmitMove() {
+      const now = Date.now();
+      if (now - lastEmitTime > EMIT_THROTTLE) {
+        socket.emit("movePlayer", {
+          playerNumber: player.number,
+          direction: player.direction,
+          roomName: game.state.roomName,
+        });
+        lastEmitTime = now;
+      }
+    }
+
+    // Replace direct emits with throttled version
     touchArea.addEventListener("touchend", () => {
       player.direction = 0;
-      socket.emit("movePlayer", {
-        playerNumber: player.number,
-        direction: player.direction,
-        roomName: game.state.roomName,
-      });
+      throttledEmitMove();
     });
 
     // Existing keyboard controls
