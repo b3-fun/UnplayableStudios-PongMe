@@ -5,7 +5,7 @@ export const games = new Map();
 
 // Properties sent to client for visualizing game.
 export const gameEnv: gameEnvType = {
-  frameRate: 20,
+  frameRate: 10,
   tableHeight: 600,
   tableWidth: 1200,
   paddleHeight: 150,
@@ -38,8 +38,8 @@ export const gameParams = {
   playerSpeed: 11,
   winningScore: 5,
   ballVelocity: {
-    x: 6,
-    y: 6,
+    x: 3,
+    y: 3,
     get v() {
       return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.x, 2));
     },
