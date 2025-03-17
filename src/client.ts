@@ -351,25 +351,6 @@ multiPlayerBtn.onclick = () => {
 function draw_canvas() {
   if (!game) return;
 
-  // Set internal game dimensions
-  // canvas.width = game.env.tableWidth;
-  // canvas.height = game.env.tableHeight;
-
-  // // Calculate scaling based on device width
-  // const maxWidth = Math.min(window.innerWidth * 0.95, game.env.tableWidth);
-  // console.log("maxWidth :", maxWidth);
-  // const maxHeight = Math.min(window.innerHeight * 0.95, game.env.tableHeight);
-  // console.log("maxHeight :", maxHeight);
-  // const scaleWidth = maxWidth / game.env.tableWidth;
-  // const scaleHeight = maxHeight / game.env.tableHeight;
-
-  // // Apply responsive scaling while maintaining aspect ratio
-  // canvas.style.width = `${game.env.tableWidth * scaleWidth}px`;
-  // canvas.style.height = `${game.env.tableHeight * scaleHeight}px`;
-
-  // // Scale the canvas context to match display size
-  // context.scale(1, 1); // Reset any previous scaling
-
   if (player.direction) {
     socket.emit("movePlayer", {
       playerNumber: player.number,
