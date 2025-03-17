@@ -5,7 +5,7 @@ export const games = new Map();
 
 // Properties sent to client for visualizing game.
 export const gameEnv: gameEnvType = {
-  frameRate: 10,
+  frameRate: 20,
   tableHeight: 600,
   tableWidth: 1200,
   paddleHeight: 150,
