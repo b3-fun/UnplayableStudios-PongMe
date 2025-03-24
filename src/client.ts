@@ -231,7 +231,7 @@ multiPlayerBtn.onclick = () => {
       const rect = canvas.getBoundingClientRect();
       const touchY = touch.clientY - rect.top;
 
-      // Convert touch position to canvas coordinates (since we're using scaled canvas)
+      // Convert touch position to canvas coordinates
       const canvasY = (touchY / rect.height) * canvas.height;
 
       // Calculate the center of the paddle
@@ -242,11 +242,13 @@ multiPlayerBtn.onclick = () => {
 
       // Set direction based on difference between touch and paddle position
       const difference = canvasY - paddleCenter;
-      const threshold = 10; // Small dead zone to prevent jitter
+      const deadZone = game.env.paddleHeight / 2; // Use half paddle height as dead zone
 
-      if (Math.abs(difference) > threshold) {
+      // Only move if touch is significantly away from paddle center
+      if (Math.abs(difference) > deadZone) {
         player.direction = difference > 0 ? -1 : 1;
       } else {
+        // Within dead zone - stop moving
         player.direction = 0;
       }
 
