@@ -73,7 +73,7 @@
         padding-top: 0px;
         max-width: 60%;
         margin: 0 auto;
-        min-height: auto;
+        min-height: 478px;
       } 
     }
     .screen-background {
@@ -576,6 +576,11 @@ input[type="radio"].hidden {
 #exit {
   top: 30px;
   left: 7%;
+
+  @media only screen and (orientation: landscape) and (max-width: 932px) and (hover: none) and (pointer: coarse)  {
+    top: 15px;
+    left: 5%;
+  }
 }
 
 #orientation-warning {
