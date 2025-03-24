@@ -209,37 +209,6 @@ multiPlayerBtn.onclick = () => {
     // Add touch controls for mobile
     const touchArea = canvas.parentElement || canvas;
 
-    const handleTouch = (e: TouchEvent) => {
-      e.preventDefault(); // Prevent scrolling
-      const touch = e.touches[0];
-      const rect = canvas.getBoundingClientRect();
-      const touchY = touch.clientY - rect.top;
-      const middleY = rect.height / 2;
-
-      // Create a dead zone of 30% in the middle
-      const deadZoneSize = rect.height * 0.3;
-      const upperThreshold = middleY - deadZoneSize / 2;
-      const lowerThreshold = middleY + deadZoneSize / 2;
-
-      // Only move if touch is outside the dead zone
-      if (touchY < upperThreshold) {
-        player.direction = 1; // Up
-      } else if (touchY > lowerThreshold) {
-        player.direction = -1; // Down
-      } else {
-        player.direction = 0; // No movement in dead zone
-      }
-
-      socket.emit("movePlayer", {
-        playerNumber: player.number,
-        direction: player.direction,
-        roomName: game.state.roomName,
-      });
-    };
-
-    touchArea.addEventListener("touchstart", handleTouch);
-    touchArea.addEventListener("touchmove", handleTouch);
-
     // Throttle movement updates to reduce network traffic
     let lastEmitTime = 0;
     const EMIT_THROTTLE = 50; // ms between emits
@@ -256,7 +225,36 @@ multiPlayerBtn.onclick = () => {
       }
     }
 
-    // Replace direct emits with throttled version
+    const handleTouch = (e: TouchEvent) => {
+      e.preventDefault(); // Prevent scrolling
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      const touchY = touch.clientY - rect.top;
+
+      // Convert touch position to canvas coordinates (since we're using scaled canvas)
+      const canvasY = (touchY / rect.height) * canvas.height;
+
+      // Calculate the center of the paddle
+      const paddleCenter =
+        player.number === 1
+          ? game.state.p1.y + game.env.paddleHeight / 2
+          : game.state.p2.y + game.env.paddleHeight / 2;
+
+      // Set direction based on difference between touch and paddle position
+      const difference = canvasY - paddleCenter;
+      const threshold = 10; // Small dead zone to prevent jitter
+
+      if (Math.abs(difference) > threshold) {
+        player.direction = difference > 0 ? -1 : 1;
+      } else {
+        player.direction = 0;
+      }
+
+      throttledEmitMove();
+    };
+
+    touchArea.addEventListener("touchstart", handleTouch);
+    touchArea.addEventListener("touchmove", handleTouch);
     touchArea.addEventListener("touchend", () => {
       player.direction = 0;
       throttledEmitMove();
