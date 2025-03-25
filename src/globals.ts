@@ -38,8 +38,8 @@ export const gameParams = {
   playerSpeed: 11,
   winningScore: 5,
   ballVelocity: {
-    x: 3,
-    y: 3,
+    x: 2.5,
+    y: 2.5,
     get v() {
       return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.x, 2));
     },

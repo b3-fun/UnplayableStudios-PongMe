@@ -36,30 +36,30 @@
     }
 
     .arcade-cabinet {
-      height: 100%;
+      height: 100vh;  /* Use viewport height */
       background-color: #fef164;
       margin: 0px auto;
       position: relative;
       z-index: 1;
+      display: flex;
+      flex-direction: column;
 
       @media (max-width: 932px) {
         margin: 0px auto;
-        height: unset;
       }
     }
     .screen-container {
-      height: 74%;
+      height: 74vh;  /* Use viewport height */
       min-height: 478px;
-
+      max-height: 900px;  /* Add max-height to prevent excessive scaling */
       position: relative;
       margin: 0 auto 20px;
-      max-width: 850px;
+      max-width: 1450px;
       width: 60%;
       padding-top: 20px;
       transform: perspective(100px) rotateX(-1deg);
       transform-origin: center bottom;
       font-family: 'Jersey 10', sans-serif;
-
 
       @media (max-width: 932px) {
         padding-top: 0px;
@@ -67,6 +67,7 @@
         width: 74%;
         margin-top: -25px;
         min-height: auto;
+        height: 70vh;  /* Slightly smaller on mobile */
       }
 
       @media only screen and (orientation: landscape) and (max-width: 932px) and (hover: none) and (pointer: coarse) {
@@ -131,23 +132,24 @@
       z-index: 1;
     }
     .screen-content {
-      height: 100%;
-
+      height: 100%;  /* Fill container height */
+      padding: 32px;
       position: relative;
       background: #111;
       border-radius: 20px;
       overflow: hidden;
       transform: translateZ(20px);
-      box-shadow: 
+      /* box-shadow: 
         inset 0 2px 30px rgba(255,255,255,0.05),
         inset 0 -2px 30px rgba(0,0,0,0.8),
-        0 0 20px rgba(0,0,0,0.5);
+        0 0 20px rgba(0,0,0,0.5); */
       margin: 10px 10 20px 10px;
-      max-width: 800px;
+      max-width: 1400px;
 
       @media (max-width: 932px) {
-        /* height: 300px; */
+        padding: 0px;
         height: 100%;
+        max-width: 800px;
       }
     }
 
@@ -462,7 +464,7 @@
   border-radius: 40px;
   pointer-events: none;
   z-index: 10;
-  opacity: 0.7;
+  /* opacity: 0.7; */
 }
 
 /* Add these new styles */
@@ -573,15 +575,23 @@ input[type="radio"].hidden {
     color: black;
 }
 
-#exit {
-  top: 30px;
-  left: 7%;
+.screen-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 
-  @media only screen and (orientation: landscape) and (max-width: 932px) and (hover: none) and (pointer: coarse)  {
-    top: 15px;
-    left: 5%;
-  }
 }
+
+#exit {
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    font-size: 1.25rem;
+}
+
+
 
 #orientation-warning {
     display: none;
@@ -704,10 +714,12 @@ input[type="radio"].hidden {
           <div class='screen-background'></div>
           <div class='screen-bezel crt'>
             <div class='screen-content'>
-              <div id='score' class='text-xl text-center text-white my-4'>Score</div>
-              <button id="exit" class="absolute game-mode-btn px-2  top-5 left-5  transition-colors duration-200 block min-w-[50px] hidden">
+              <div class="screen-header">
+                <button id="exit" class="game-mode-btn px-2   transition-colors duration-200 block min-w-[50px] hidden">
                   Exit
-              </button>
+                </button>
+                <div id='score' class='text-xl text-center text-white my-4'>Score</div>
+              </div>
               <div id='info' class='text-2xl text-center text-white '>
               <div class="info-text text-3xl font-bold">Choose game mode</div>
        

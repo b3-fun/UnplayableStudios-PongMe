@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
 import { gameEnvType, gameStateType } from "./types";
 import { formatAddress, formatUsername } from "./basement.util";
+import { gameEnv } from "./globals";
 
 // Update the JWT parsing function to match your format
 function decodeB3Token(token: string): {
@@ -413,21 +414,30 @@ function getRedirectUrl() {
   return "/";
 }
 
+const screenElem = document.querySelector(".screen-content")!;
+
 function setupResponsiveCanvas() {
+  const screenHeight = screenElem.clientHeight;
+  console.log("screenHeight :", screenHeight);
+  const screenWidth = screenElem.clientWidth;
   // Detect if we're on mobile
   const isMobile = window.innerHeight < 500;
-  console.log("isMobile :", isMobile);
 
+  const isUltrawide = window.innerWidth > 1400;
+  console.log("window.innerWidth :", window.innerWidth);
   // Use available width
-  const maxWidth = Math.min(window.innerWidth * 0.95, 1200);
-  const maxHeight = Math.min(window.innerHeight * 0.95, 600);
+  const maxWidth = Math.min(window.innerWidth * 0.95, gameEnv.tableWidth);
+  const maxHeight = isUltrawide
+    ? screenHeight
+    : Math.min(window.innerHeight * 0.95, gameEnv.tableHeight);
 
   // Calculate height - on mobile, divide by 4 instead of 2
   let targetHeight;
   if (isMobile) {
-    targetHeight = maxHeight * (600 / 1200); // This will make it 1/4 of original height ratio
+    targetHeight = maxHeight * (gameEnv.tableHeight / gameEnv.tableWidth); // This will make it 1/4 of original height ratio
   } else {
-    targetHeight = maxHeight * (600 / 1200); // For desktop, use the full maxHeight
+    targetHeight =
+      maxHeight * ((gameEnv.tableHeight + 100) / gameEnv.tableWidth); // For desktop, use the full maxHeight
   }
   console.log("targetHeight :", targetHeight);
 
